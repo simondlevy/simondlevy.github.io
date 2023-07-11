@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_03.html","20190608231412","https://web.archive.org/","web","/_static/",
+	      "1560035652");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="//web.archive.org/web/20190608231412js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+</head>
+<body onload="var start = 0; draw(start); var slider = document.getElementById('slider'); slider.value = start">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 3: Putting it Together</h3>
+
+So now we have two equations describing the state of our airplane:
+
+<p>
+<b>
+&nbsp; <i>altitude<sub>current_time</sub></i> = <output for="slider" id="droprate">0.98</output> * <i>altitude<sub>previous_time</sub></i>
+<p>
+&nbsp; <i>observed_altitude<sub>current_time</sub></i> = 
+<i>altitude<sub>current_time</sub></i> + <i>noise<sub>current_time</sub></i> 
+</b>
+<p>
+
+These equations are pretty easy to understand, but they aren't general enough to deal with systems other than 
+our airplane-altitude example.  To make the equations more general, engineers adopt the familiar mathematical 
+convention of using names like $x$, $y$, and $z$
+for variables and $a$ and $b$ for constants, and the subscript $k$
+to represent time.<sup><a href="#fn3" id="r3">[3]</a></sup>  So our equations become:
+
+\[
+\begin{aligned}
+x_k &amp; = a x_{k-1} \\
+z_k &amp; = x_k + v_k \\
+\end{aligned} 
+\]
+
+
+where $x$ is the current state of our system, $x_{k-1}$ is its previous state, $a$
+is some constant (0.98 in our example), $z_k$ is our current observation of the system, and $v_k$
+is the current noise measurement.   One reason the Kalman filter is so popular is
+that it allows us to get a very good estimation of the actual current state $x_k$
+given the observation $z_k$, the constant $a$, and the overall amount of measurement noise $v$.
+
+<p>
+
+To complete the picture, we should also consider that that actual altitude of the airplane may not describe a 
+perfectly smooth path.  As anyone who has ever flown can tell you, airplanes typically experience a certain
+amount of turbulence as they descend for a landing.  This turbulence is by definition noisy, and so can
+be treated as another noise signal: 
+
+<p>
+
+<b>
+&nbsp; <i>altitude<sub>current_time</sub></i> = 0.98 * <i>altitude<sub>previous_time</sub></i> + 
+<i>turbulence<sub>current_time</sub></i>
+</b>
+<p>
+
+More generally:
+
+\[ x_k = a x_{k-1} + w_k \]
+
+where $w_k$ is called the <i>process noise</i>, because, like turbulence, it is an inherent part of the process,
+and not an artifact of observation or measurement. We will ignore process noise for a while in order to focus on
+other topics, but we'll return to it in the section on Sensor Fusion.<sup><a href="#fn4" id="r4">[4]</a></sup>
+
+<h3> 
+    <p>Previous: <a href="kalman_02.html" rel="next">Dealing with Noise</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_04.html" rel="next">State Estimation</a>
+</h3>
+
+<hr>
+
+<p id="fn3"><a href="#r3">[3]</a> Why not <i>t</i> for time? Probably because time is being treated as a sequence
+of discrete steps, for which an index variable like <i>k</i> is conventional.
+
+<p id="fn4"><a href="#r4">[4]</a> I have also ignored the control-signal component of the state equation, because
+it is tangential to most of the Kalman Filter equations and can be easily added when needed.
+
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 23:14:12 Jun 08, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:20:07 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 92.491
+  exclusion.robots: 0.104
+  exclusion.robots.policy: 0.093
+  RedisCDXSource: 0.803
+  esindex: 0.01
+  LoadShardBlock: 65.657 (3)
+  PetaboxLoader3.datanode: 57.722 (4)
+  load_resource: 518.1
+  PetaboxLoader3.resolve: 467.714
+-->
