@@ -5,99 +5,262 @@
 <script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
 <script type="text/javascript">
   __wm.init("https://web.archive.org/web");
-  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_10.html","20170125215811","https://web.archive.org/","web","/_static/",
-	      "1485381491");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_11.html","20170125215816","https://web.archive.org/","web","/_static/",
+	      "1485381496");
 </script>
 <link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
 <link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
 <!-- End Wayback Rewrite JS Include -->
 
+
 <title>The Extended Kalman Filter: An Interactive Tutorial</title>
 
-<script type="text/javascript" src="https://web.archive.org/web/20170125215811js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20170125215816js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
 });
 </script>
+
 </head>
 
 <h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
 
-<h3>Part 10: Adding Velocity to the System</h3>
+<h3>Part 11: Linear Algebra</h3>
 
-Recall our original equation for the altitude of an airplane:
-
-<p>
-
-&nbsp; <b><i>altitude<sub>current</sub></i> = 0.98 * <i>altitude<sub>previous</sub></i>
-</b>
-
-<p>
-
-with the more general form:
-
-\[x_k = a x_{k-1} \]
-
-Thinking back to the math and physics you may have learned in high school, this kind of formula seems a bit
-odd.  Altitude, after all, is a kind of distance (above sea level, or above ground level), for which we learned 
-the formula
-
-<p>
-
-&nbsp; <i><b>distance = velocity * time</b></i>
-</b>
-
-<p>
-
-Can we reconcile these two different ways of thinking about distance?  The answer is yes, but it will
-require us to take two steps.  
-
-<p>
-
-First, we need to introduce the concepts <i>current time</i> and <i>previous time</i> into our 
-high-school formula, and think about distance in discrete time steps rather than overall distance:
-
-<p>
-
-&nbsp; <b><i>distance<sub>current</sub></i> =  <i>distance<sub>previous</sub></i> + 
- <i>velocity<sub>previous</sub></i> * (<i>time<sub>current</sub></i> - <i>time<sub>previous</sub></i>)
-</b>
-
-<p>
-
-In other words, where we are now is where we were a moment ago, plus the distance we just traveled. If
-we perform this computation at regular time intervals, or timesteps (one second, 100 nanoseconds, six months, etc.), then
-we can simplify this to:
+So we have an equation expressing distance in terms of velocity and time:
 
 <p>
 &nbsp; <b><i>distance<sub>current</sub></i> =  <i>distance<sub>previous</sub></i> + 
- <i>velocity<sub>previous</sub></i> * <i>timestep</i>
+    <i>velocity<sub>previous</sub></i> * <i>timestep</i>
 </b>
 <p>
 
-This equation moves us closer to our general form
+which we are trying to reconcile with a more general equation
 
-\[x_k = a x_{k-1} \]
+\[ x_k = a x_{k-1} \]
 
-but we still seem to have two very different systems: one involves a simple product, and the other
-involves a product and a sum.  Coming up with a general equation for both brings us the second
-step: <i>linear algebra</i>.
+Fortunately for us, mathematicians long ago devised &ldquo;one weird trick&rdquo; for representing
+both kinds of equations in the same way.  The trick is to think of a situation (like the state of a system) not as 
+a single number, but rather as a list of numbers called a <i>vector</i>, which is like a column
+in an Excel spreadsheet. The size of the vector (number of elements) corresponds to the number of things
+we want to encode about the state.  For distance and velocity, we have two items in our vector:
 
+\[
+x_k \equiv
+\begin{bmatrix}
+       distance_k \\
+       velocity_k
+\end{bmatrix}
+\]
+
+Here I've used the &ldquo;triple equal $\equiv$ to indicate that this is a definition:
+<i>the current state is defined as a vector containing the current distance and current velocity</i>.
+
+<p>
+
+So how does this help us? Well, another thing we get from linear algebra is a <i>matrix</i>.  If a vector
+is like a column of values in a spreadsheet, then a matrix is like a whole spreadsheet, or table of values.
+When we multiply a matrix by a vector we get another vector of the same size:
+
+\[
+\begin{bmatrix}
+       a &amp; b \\
+       c &amp; d
+\end{bmatrix}
+\begin{bmatrix}
+       x \\
+       y 
+\end{bmatrix} 
+=
+\begin{bmatrix}
+       ax + by \\
+       cx + dy
+\end{bmatrix}
+\]
+
+
+For example:
+
+\[
+\begin{bmatrix}
+       8 &amp; 3 \\
+       4 &amp; 7
+\end{bmatrix}
+\begin{bmatrix}
+       2 \\
+       5 
+\end{bmatrix} 
+=
+\begin{bmatrix}
+       31 \\
+       43       
+\end{bmatrix}
+\]
+
+The vectors and matrices can be of any size, as long as they match:
+
+\[
+\begin{bmatrix}
+       a &amp; b &amp; c\\
+       d &amp; e &amp; f\\
+       g &amp; h &amp; i
+\end{bmatrix}
+\begin{bmatrix}
+       x \\
+       y \\
+       z
+\end{bmatrix} 
+=
+\begin{bmatrix}
+       ax + by  + cz\\
+       dx + ey  + fz\\
+       gx + hy  + iz
+\end{bmatrix}
+\]
+
+We can also multiply two matrices together to get another matrix:
+
+\[
+\begin{bmatrix}
+       a &amp; b &amp; c\\
+       d &amp; e &amp; f\\
+       g &amp; h &amp; i
+\end{bmatrix}
+\begin{bmatrix}
+       r &amp; s &amp; t \\
+       u &amp; v &amp; w \\
+       x &amp; y &amp; z
+\end{bmatrix} 
+=
+\begin{bmatrix}
+       ar+bu+cx &amp; as+bv+cy &amp; at+bw+cz\\
+       dr+eu+fx &amp; ds+ev+fy &amp; dt+ew+fz\\
+       gr+hu+ix &amp; gs+hv+iy &amp; gt+hw+iz\\
+
+\end{bmatrix}
+\]
+
+Adding two matrices is simpler; we just add each pair of elements:
+
+\[
+\begin{bmatrix}
+       a &amp; b &amp; c\\
+       d &amp; e &amp; f\\
+       g &amp; h &amp; i
+\end{bmatrix}
++
+\begin{bmatrix}
+       r &amp; s &amp; t \\
+       u &amp; v &amp; w \\
+       x &amp; y &amp; z
+\end{bmatrix} 
+=
+\begin{bmatrix}
+       a+r &amp; b+s &amp; c+t\\
+       d+u &amp; e+v &amp; f+w\\
+       g+x &amp; h+y &amp; i+z
+\end{bmatrix}
+\]
+
+<br><br>
+
+Returning to the task at hand, we define a matrix
+
+\[
+A =
+\begin{bmatrix}
+       1 &amp; timestep\\
+       0 &amp; 1
+\end{bmatrix}
+\]
+
+following the convention of using an uppercase letter to represent a matrix.  Then our general equation is
+pretty much the same:
+
+\[ x_k = A x_{k-1} \]
+
+which works out as we want:
+
+\[
+\begin{bmatrix}
+       distance_k\\
+       velocity_k
+\end{bmatrix}
+=
+\begin{bmatrix}
+       1 &amp; timestep\\
+       0 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+distance_{k-1}\\
+velocity_{k-1}
+\end{bmatrix}
+\]
+
+\[
+=
+\begin{bmatrix}
+1 * distance_{k-1} + timestep * velocity_{k-1}\\
+       0 * distance_{k-1} + 1 * velocity_{k-1}\\
+\end{bmatrix}
+\]
+
+\[
+=
+\begin{bmatrix}
+distance_{k-1} + timestep * velocity_{k-1}\\
+       velocity_{k-1}\\
+\end{bmatrix}
+\]
+
+
+
+
+In other words, the current distance is the previous distance plus the previous velocity times the timestep, and
+the current velocity is the same as the previous velocity.  If we want to model a system in which
+the velocity changes over time, we can easily modify our vector and matrix to include acceleration:
+<sup><a href="#fn12" id="r12">[12]</a></sup> 
+
+\[
+\begin{bmatrix}
+       distance_k\\
+       velocity_k\\
+       acceleration_k
+\end{bmatrix}
+=
+\begin{bmatrix}
+       1 &amp; timestep &amp; 0\\
+       0 &amp; 1 &amp; timestep \\
+       0 &amp; 0 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+distance_{k-1}\\
+velocity_{k-1}\\
+acceleration_{k-1}
+\end{bmatrix}
+\]
 <h3> 
-    <p>Previous: <a href="kalman_09.html" rel="next">Modifying the Estimates</a>
+    <p>Previous: <a href="kalman_10.html" rel="next">Adding Velocity to the System</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Next: <a href="kalman_11.html" rel="next">Linear Algebra</a>
+    Next: <a href="kalman_12.html" rel="next">Prediction and Update Revisited</a>
 </h3>
 
+<hr>
+
+<p id="fn12"><a href="#r12">[12]</a> Several people have emailed me to ask why the upper-right value in this matrix is
+0, rather than the $0.5t^2$ value that we learned in high-school physics.  The answer is that this system does not
+relate distance directly to acceleration; instead, it uses acceleration to update velocity, and velocity to update
+distance.  If you're still not convinced, you can run this little Python <a href="statetrans.py">program</a>,
+which produces the expected parabolic distance <a href="statetrans.png">curve</a> under constant acceleration.  
 
 </body>
 </html>
 
 <!--
-     FILE ARCHIVED ON 21:58:11 Jan 25, 2017 AND RETRIEVED FROM THE
-     INTERNET ARCHIVE ON 06:30:22 Jul 11, 2023.
+     FILE ARCHIVED ON 21:58:16 Jan 25, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:40:14 Jul 11, 2023.
      JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
 
      ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
@@ -105,13 +268,13 @@ step: <i>linear algebra</i>.
 -->
 <!--
 playback timings (ms):
-  captures_list: 197.65
-  exclusion.robots: 0.13
-  exclusion.robots.policy: 0.117
-  cdx.remote: 0.065
-  esindex: 0.01
-  LoadShardBlock: 123.702 (3)
-  PetaboxLoader3.datanode: 426.654 (4)
-  load_resource: 370.079
-  PetaboxLoader3.resolve: 44.93
+  captures_list: 158.13
+  exclusion.robots: 0.083
+  exclusion.robots.policy: 0.074
+  cdx.remote: 0.051
+  esindex: 0.009
+  LoadShardBlock: 129.572 (3)
+  PetaboxLoader3.datanode: 81.971 (4)
+  load_resource: 74.953
+  PetaboxLoader3.resolve: 29.718
 -->
