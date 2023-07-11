@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_18.html","20190530190832","https://web.archive.org/","web","/_static/",
+	      "1559243312");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20190530190832js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="//web.archive.org/web/20190530190832js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+<script type="text/javascript">
+
+function init() {
+
+    setChecked('f1');
+
+    setChecked('continuous');
+
+    redraw();
+}
+
+
+function f1(x) {
+
+    return Math.exp(2*x);
+}
+
+function df1(x) {
+
+    return 2*Math.exp(2*x);
+}
+
+function f2(x) {
+
+    return 10 * Math.log10(x);
+}
+
+function df2(x) {
+
+    return 10 / (Math.log(10)*x);
+}
+
+function f3(x) {
+
+    return 10 * Math.exp(-x/10);
+}
+
+function df3(x) {
+
+    return -Math.exp(-x/10);
+}
+
+
+function redraw() {
+
+    // Used checked function
+    f = f1;
+    df = df1;
+    if (isChecked('f2')) {
+        f = f2;
+        df = df2;
+    }
+    if (isChecked('f3')) {
+        f = f3;
+        df = df3;
+    }
+
+    // Initialize arrays
+    df_signal = [];
+    dfk_signal = [];
+
+    // Compute first derivatives two different ways
+    numobs = 1000;
+    fx_prev = 0;
+    for (k=1; k<numobs; ++k) {
+        x = k / numobs;
+        fx = f(x);
+        if (k > 1) {
+            dfk_signal.push((fx-fx_prev)*numobs);
+            df_signal.push(df(x));
+        }
+        fx_prev = fx;
+    } 
+
+    // Plot first derivatives from method chosen by user
+    signal = df_signal;
+    color = 'blue'
+    if (isChecked('discrete')) {
+        signal = dfk_signal;
+        color = 'green';
+    }
+
+    ctx = clearCanvas('canvas');
+    minval = arrayMin(df_signal);
+    maxval = arrayMax(df_signal);
+    plotArray(ctx, signal, color, minval, maxval);
+}
+
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 18: Computing the Derivative</h3>
+
+If you've made it this far, you are in a very good position to understand the Extended Kalman Filter.
+There are just two more things to consider:
+
+<ol>
+    <p><li> How to compute the first derivative from an actual signal, without knowing its underlying function.
+    <p><li> How to generalize our single-valued nonlinear state/observation model to the multi-valued systems we've been
+    considering.
+</ol>
+
+To answer the first question, we note that the first derivative of a function
+is defined as the limit of the difference between successive values of that function, 
+divided by the timestep, as the timestep approaches zero:
+
+\[ f'(x) =   \lim_{\Delta x \to 0} \frac{f(x+\Delta x) - f(x)}{\Delta x} \]
+
+If you don't understand that equation, don't worry: just think about 
+subtracting successive differences of a signal $y$ to approximate its first
+derivative:
+
+\[ \frac{(y_{k+1} - y_k)} {timestep} \]
+
+Indeed, as the demo below shows,
+this <i>finite difference</i> formula is often a very good approximation to the first derivative.  
+The demo allows you to choose among the same three functions as on the previous page (shown in the
+interval [0,1]), but this time you can select between the derivative and finite difference:
+
+<p>
+
+<td> <canvas id="canvas" width="500" height="300" style="border:1px solid #000000;"></canvas></td>
+
+<table>
+    <tr>
+        <td> <input type="radio" name="fun" id="f1" onchange="redraw();"> $f(x) = e^{2x}$ </td>
+        <td> <input type="radio" name="fun" id="f2" onchange="redraw();"> $f(x) = 10 log_{10}(x)$ </td>
+        <td> <input type="radio" name="fun" id="f3" onchange="redraw();"> $f(x) = 10 e^{-x/10}$ </td>
+    </tr>
+   <tr><td>&nbsp;</td></tr>
+    <tr>
+        <td> <input type="radio" name="method" id="continuous" onchange="redraw();"> <font color="blue">Derivative</font></td>
+        <td> <input type="radio" name="method" id="discrete" onchange="redraw();"> <font color="green">Finite difference</font></td>
+    </tr>
+ </table>
+
+<br>
+
+<p>
+
+If one signal (like sensor value $z_k$) is a function of another 
+signal (like state $x_k$), we can  divide successive differences of the first signal
+by successive differences of the second signal:
+
+
+\[ \frac{z_{k+1} - z_k}{x_{k+1}-x_k}  \]
+
+<h3> 
+    <p>Previous: <a href="kalman_17.html" rel="next">A Nonlinear Kalman Filter</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_19.html" rel="next">The Jacobian</a>
+</h3>
+
+<hr>
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 19:08:32 May 30, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:33:13 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 101.718
+  exclusion.robots: 0.089
+  exclusion.robots.policy: 0.078
+  cdx.remote: 0.061
+  esindex: 0.01
+  LoadShardBlock: 32.364 (3)
+  PetaboxLoader3.datanode: 41.441 (4)
+  load_resource: 235.446
+  PetaboxLoader3.resolve: 208.282
+-->

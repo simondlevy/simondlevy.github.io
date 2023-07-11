@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+
+
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_07.html","20180901074434","https://web.archive.org/","web","/_static/",
+	      "1535787874");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20180901074434js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="//web.archive.org/web/20180901074434js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+
+<script type="text/javascript">
+
+// Globals
+var x_array = [];
+var z_array = [];
+
+
+function init() {
+
+    // Clear canvas
+    ctx = getCanvasContext();
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+    x = getFloatValue("xinit");
+
+    a = getFloatValue("a");
+    r = getFloatValue("r");
+
+    // Initialize arrays for plot
+    x_array = [];
+    z_array = [];
+
+    for (k = 0; k < 10; k++) { 
+
+        setIndexedValue("x", k, x, 0);
+        z = x + 2 * r * Math.random() - r;
+        setIndexedValue("z", k, z, 0);
+
+        // Append values to arrays for plotting
+        x_array.push(x);
+        z_array.push(z);
+
+        if (k == 0) {
+
+            setIndexedValue("xhat", k, z, 0);
+        }
+        else {
+
+            clearValue("xhat", k);
+        }
+
+        clearValue("p", k);
+        clearValue("g", k);
+
+        // Update X
+        x *= a;
+    }
+
+    // Plot arrays
+    plotMyArray(x_array, "blue"); 
+    plotMyArray(z_array, "red"); 
+
+    setIndexedValue("p", 0, 1, 0)
+
+} // init
+
+function plotMyArray(array, color) {
+
+    plotArray(getCanvasContext(), array, color, 0, 1200);
+}
+
+function run() {
+
+    // Initialize parameters from values in textboxes
+    a = getFloatValue("a");
+    r = getFloatValue("r");
+
+   // Initialize state estimate and error covariance
+    xhat = z_array[0];
+    p = 1;
+
+    // Initialize array of state estimates
+    xhat_array = [xhat];
+
+     // Compute values from Kalman filter and add them to the table
+    for (k = 1; k < 10; k++) { 
+
+        // Get values from array
+        z    = z_array[k];
+
+        // Compute new values using Kalman filter formulas: based on 
+        // http://en.wikipedia.org/wiki/Kalman_filter#Update
+
+        // Predict
+        xhat = a * xhat;
+        p    = a * p * a;
+
+        // Update
+        g    = p == 0 ? 1 : p  / (p  + r);
+        xhat = xhat + g * (z - xhat);
+        p    = (1 - g) * p;
+
+        // Set new values in table
+        setIndexedValue("g",    k, g,    3); 
+        setIndexedValue("xhat", k, xhat, 0);
+        setIndexedValue("p",    k, p,    3);
+
+
+        // Append values to arrays for plotting
+        z_array.push(z);
+        xhat_array.push(xhat);
+    }
+
+    // Plot arrays
+    plotMyArray(xhat_array, "green");
+
+}
+
+function setIndexedValue(tagbase, index, value, prec) {
+
+    document.querySelector(indexToTag(tagbase, index)).value = roundToPrecision(value, prec);
+}
+
+
+</script>
+
+
+</head>
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 7: Running the Filter</h3>
+
+So now we have everything we need to run our Kalman Filter:
+
+<p>
+
+<i><b>Predict</b></i>:
+
+\[ \hat{x}_k = a \hat{x}_{k-1} \]
+\[ p_k = a p_{k-1} a \]
+
+<i><b>Update</b></i>:
+
+\[ g_k = p_k / (p_k + r) \]
+\[ \hat{x}_k \leftarrow \hat{x}_k + g_k(z_k - \hat{x}_k)\]
+\[ p_k \leftarrow  (1 - g_k)p_k \]
+
+
+Note that I've used the assignment (arrow) symbol, instead of the standard equal sign, in the last two lines of
+the update.  Altough this usage is nontraditional, it gets across the idea that the update to $\hat{x}_k$ and $p_k$
+is <i>modifying</i> their current values (from the prediction step), rather than <i>defining</i> those values in terms
+of a previous step (as prediction does). <sup><a href="#fn9" id="r9">[9]</a></sup> 
+
+
+<p>
+
+To try out our filter, we'll need:
+
+<ul>
+
+    <li> A sequence of observations $z_k$
+    <br>
+    <br>
+    <li> An initial value (base case) $\hat{x}_0$ for the state estimates.  This can just be our first observation
+    $z_0$.
+    <br>
+    <br>
+    <li> An initial value $p_0$ for the prediction error.  It can't be 0, otherwise $p_k$
+    would stay 0 forever by multiplication.  So we arbitrarily set it to 1.
+</ul>
+
+For our observations, rather than trying to observe an actual system (like a plane coming in for a landing), we'll 
+fake up some observations based on adding random noise 
+<sup><a href="#fn10" id="r10">[10]</a></sup> 
+$v_k$ in the interval [-200,+200] to the idealized values $x_k = 0.75 x_{k-1}$ , starting with $x_0 = 1000$:
+<br>
+<br>
+
+<table border="2" width="400" height="160" cellspacing="0" cellpadding="0" align="left">
+    <tr align="right">
+        <td> $k$ </td>
+        <td> </td>
+        <td> 0 </td>
+        <td> 1 </td>
+        <td> 2 </td>
+        <td> 3 </td>
+        <td> 4 </td>
+        <td> 5 </td>
+        <td> 6 </td>
+        <td> 7 </td>
+        <td> 8 </td>
+        <td> 9 </td>
+    </tr>
+    <tr align="right">
+        <td> <font color="blue">$x_k$</font>
+        <td> </td>
+        <td> <font color="blue"><output id="x0"></output></font></td>
+        <td> <font color="blue"><output id="x1"></output></font></td>
+        <td> <font color="blue"><output id="x2"></output></font></td>
+        <td> <font color="blue"><output id="x3"></output></font></td>
+        <td> <font color="blue"><output id="x4"></output></font></td>
+        <td> <font color="blue"><output id="x5"></output></font></td>
+        <td> <font color="blue"><output id="x6"></output></font></td>
+        <td> <font color="blue"><output id="x7"></output></font></td>
+        <td> <font color="blue"><output id="x8"></output></font></td>
+        <td> <font color="blue"><output id="x9"></output></font></td>
+    </tr>
+    <tr align="right">
+        <td> <font color="red">$z_k$</font>
+        <td> </td>
+        <td> <font color="red"><output id="z0"></output></font></td>
+        <td> <font color="red"><output id="z1"></output></font></td>
+        <td> <font color="red"><output id="z2"></output></font></td>
+        <td> <font color="red"><output id="z3"></output></font></td>
+        <td> <font color="red"><output id="z4"></output></font></td>
+        <td> <font color="red"><output id="z5"></output></font></td>
+        <td> <font color="red"><output id="z6"></output></font></td>
+        <td> <font color="red"><output id="z7"></output></font></td>
+        <td> <font color="red"><output id="z8"></output></font></td>
+        <td> <font color="red"><output id="z9"></output></font></td>
+    </tr>
+       <tr align="right">
+           <td> $p_k$</td>
+            <td> </td>
+            <td> <output id="p0"></output></td>
+            <td> <output id="p1"></output></td>
+            <td> <output id="p2"></output></td>
+            <td> <output id="p3"></output></td>
+            <td> <output id="p4"></output></td>
+            <td> <output id="p5"></output></td>
+            <td> <output id="p6"></output></td>
+            <td> <output id="p7"></output></td>
+            <td> <output id="p8"></output></td>
+            <td> <output id="p9"></output></td>
+        </tr>
+    <tr align="right">
+        <td> <font color="green"> $\hat{x}_k$   </font>
+            <td> </td>
+            <td> <font color="green"><output id="xhat0"></output></font></td>
+            <td> <font color="green"><output id="xhat1"></output></font></td>
+            <td> <font color="green"><output id="xhat2"></output></font></td>
+            <td> <font color="green"><output id="xhat3"></output></font></td>
+            <td> <font color="green"><output id="xhat4"></output></font></td>
+            <td> <font color="green"><output id="xhat5"></output></font></td>
+            <td> <font color="green"><output id="xhat6"></output></font></td>
+            <td> <font color="green"><output id="xhat7"></output></font></td>
+            <td> <font color="green"><output id="xhat8"></output></font></td>
+            <td> <font color="green"><output id="xhat9"></output></font></td>
+        </tr>
+         <tr align="right">
+             <td> $g_k$ </td>
+            <td> </td>
+            <td> <output id="g0"></output></td>
+            <td> <output id="g1"></output></td>
+            <td> <output id="g2"></output></td>
+            <td> <output id="g3"></output></td>
+            <td> <output id="g4"></output></td>
+            <td> <output id="g5"></output></td>
+            <td> <output id="g6"></output></td>
+            <td> <output id="g7"></output></td>
+            <td> <output id="g8"></output></td>
+            <td> <output id="g9"></output></td>
+       </tr>
+    </table> 
+
+    &nbsp;
+
+    <canvas id="canvas" width="400" height="160" align="right" style="border:1px solid #000000;"></canvas>
+
+    <br><br>
+
+    $x_0 = $ <input type="text" size="1" id="xinit" value="1000">
+    &nbsp; 
+    $r = $ <input type="text" size="1" id="r" value="200">
+    &nbsp; 
+    $a = $ <input type="text" size="1" id="a" value="0.75">
+    <button onclick="init()">Initialize</button>
+    <button onclick="run()">Run</button>
+
+    <br>
+    <br>
+    Once you're ready to run the filter, hit the Run button to see how the Kalman filter produces a smooth
+    version (green) of the noisy signal (red) that is often remarkably close to the original clean signal (blue).  
+    You can also try different values
+    for $x_0$, $r$, and $a$.
+ 
+    <h3> 
+        <p>Previous: <a href="kalman_06.html" rel="next">Prediction and Update</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Next: <a href="kalman_08.html" rel="next">A More Realistic Model</a>
+    </h3>
+
+    <hr>
+
+    <p id="fn9"><a href="#r9">[9]</a> Indeed, if you look at the source code for this page, you will see
+    that the JavaScript for the prediction and update is even simpler than the formulas:
+
+    <pre>
+    // Predict
+    xhat = a * xhat;
+    p    = a * p * a;
+
+    // Update
+    g    = p  / (p  + r);
+    xhat = xhat + g * (z - xhat);
+    p    = (1 - g) * p;
+    </pre>
+
+I thank Marco Camurri and John Mahoney for pointing out inconsistencies in my use of these equations, in
+earlier versions of this tutorial.
+
+     <p id="fn10"><a href="#r10">[10]</a> I have added noise from a 
+    <a href="https://web.archive.org/web/20180901074434/http://en.wikipedia.org/wiki/Uniform_distribution_%28discrete%29">uniform distribution</a>
+    rather than the 
+    <a href="https://web.archive.org/web/20180901074434/http://en.wikipedia.org/wiki/Normal_distribution">Gaussian (normal)</a> distribution 
+    assumed by the Kalman Filter, but it doesn't make much difference from the perspective
+    of this demo.
+
+    </body>
+    </html>
+
+<!--
+     FILE ARCHIVED ON 07:44:34 Sep 01, 2018 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:29:07 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 171.711
+  exclusion.robots: 0.072
+  exclusion.robots.policy: 0.063
+  cdx.remote: 0.052
+  esindex: 0.008
+  LoadShardBlock: 133.431 (3)
+  PetaboxLoader3.datanode: 164.36 (4)
+  load_resource: 138.173
+  PetaboxLoader3.resolve: 62.636
+-->

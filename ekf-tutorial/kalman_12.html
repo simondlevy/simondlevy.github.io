@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_12.html","20190505200537","https://web.archive.org/","web","/_static/",
+	      "1557086737");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="//web.archive.org/web/20190505200537js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+</head>
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 12: Prediction and Update Revisited</h3>
+
+Here again is our modified formula for system state:
+
+\[ x_k = A x_{k-1} \]
+
+where $x$ is a vector and $A$ is a matrix.  As you may recall, the original form of this equation was
+
+\[ x_k = a x_{k-1}  + b u_k \]
+
+where $u_k$ is a control signal, and $b$ is a coefficient to scale it.  We also had the equation 
+
+\[ z_k = c x_k  + v_k \]
+
+where $z_k$ is a measurement (observation, sensor) signal, and $v_k$ is some noise added to that signal resulting from the sensor's inaccuracy.
+So how do we modify these original forms to work with our new vector/matrix approach?  As you might suspect, linear algebra makes this quite simple:
+we write the coefficients $b$ and $c$ in capital letters, making them matrices rather than scalar (single) values:
+
+\[ x_k = A x_{k-1} + B u_k\]
+
+\[ z_k = C x_k  + v_k \]
+
+Then all the variables 
+(state, observation, noise, control) are considered vectors, and we have a set of matrix * vector multiplications.
+<sup><a href="#fn13" id="r13">[13]</a></sup> 
+
+<p>
+
+So what about our prediction and update equations? Recall that they are:
+
+<p>
+
+<i><b>Predict</b></i>:
+
+\[\hat{x}_k = a \hat{x}_{k-1} + b u_k \]
+
+\[p_k = a p_{k-1} a \]
+
+<i><b>Update</b></i>:
+
+\[ g_k = p_k c / (c p_k c + r) \] 
+
+\[ \hat{x}_k \leftarrow \hat{x}_k + g_k(z_k - c \hat{x}_k) \]
+
+\[ p_k \leftarrow (1 - g_k c) p_k \]
+
+We would like to just capitalize all the constants $a$, $b$, $c$, and $r$ so that they become matrices
+$A$, $B$, $C$, and $R$, and be done with it. But things are a little trickier for linear algebra!  
+You may remember when I promised to explain why I didn't simplify $a p_{k-1} a$ to $a^2 p_{k-1}$.
+The answer is that linear algebra multiplication is not as straightforward as ordinary multiplication. 
+To get the answer to come out right, we often have to perform the multiplication in a certain order; for 
+example, $A x B$ is not necessarily equal to $B x A$. We may also need to <i>transpose</i> the matrix,
+indicated by putting a little superscript $^T$ next to the matrix. Transposing a matrix is done by
+turning each row into a column and each column into a row. Here are some examples:
+
+
+\[
+\begin{bmatrix}
+       a &amp; b\\
+       c &amp; d
+\end{bmatrix}
+^T=
+\begin{bmatrix}
+       a &amp; c\\
+       b &amp; d
+\end{bmatrix}
+\]
+
+\[
+\begin{bmatrix}
+       a &amp; b &amp; c\\
+       d &amp; e &amp; f \\
+       g &amp; h &amp; i
+\end{bmatrix}
+^T =
+\begin{bmatrix}
+       a &amp; d &amp; g\\
+       b &amp; e &amp; h \\
+       c &amp; f &amp; i
+\end{bmatrix}
+\]
+
+With this knowledge in mind, we can rewrite our prediction equations as follows:
+
+\[\hat{x}_k = A \hat{x}_{k-1} + B u_k \]
+
+\[P_k = A P_{k-1} A^T \]
+
+Note that we have rewritten both $A$ and $P_k$ in capital letters, indicating that they are matrices.  We already
+know why $A$ is a matrix; we will defer for a moment understanding why $P_k$ is also a matrix.
+
+<p>
+
+What about our update equations?  The second update formula, for the state estimation $\hat{x}_k$, is straightforward:
+
+\[ \hat{x}_k \leftarrow \hat{x}_k + g_k(z_k - C \hat{x}_k) \]
+
+but the gain update involves a division:
+
+\[ g_k = p_k c / (c p_k c + r) \] 
+
+Since multiplication and division are so closely related, we run into a similar issue with matrix division as we did with multiplication.
+To see how we deal with this issue, let's first rewrite our first update equation using the familiar superscript $^{-1}$ to indicate division
+as inversion ($a^{-1} = 1/a$):
+
+\[ g_k = p_k c (c p_k c + r)^{-1} \] 
+
+Now we turn $c$, $r$,and $g$ and the constant 1
+into matrices, transposing $C$ as needed &ndash; and deferring for a moment, once more, our understanding of why 
+they need to be matrices:
+
+\[ G_k = P_k C^T (C p_k C^T + R)^{-1} \] 
+
+ \[ P_k \leftarrow (I - G_k C) P_k \]
+
+So how do we compute $(C p_k C^T + R)^{-1}$, the inverse of the matrix $(C p_k C + R)$ ? Just as with
+ordinary inversion, where $a * a^{-1}  = 1$, we need matrix inversion to work in a way that multiplying a matrix
+by its own inverse produces an <i>identity</i> matrix, which when multiplied by any other matrix leaves that
+matrix unchanged: 
+
+\[ A A^{-1} = I \]
+
+where (for a 3x3 matrix)
+
+\[I = 
+\begin{bmatrix}
+       1 &amp; 0 &amp; 0\\
+       0 &amp; 1 &amp; 0 \\
+       0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]
+
+
+Computing a matrix inverse isn't as simple as inverting each element of the matrix, which would yield the wrong answer in most cases.
+Although the details of matrix inversion are beyond the scope of this tutorial, there are excellent resources like 
+<a href="https://web.archive.org/web/20190505200537/http://mathworld.wolfram.com/MatrixInverse.html">MathWorld</a> for learning about it. Even better, you usually don't have
+to code it yourself; it is built into languages like <a href="https://web.archive.org/web/20190505200537/http://www.mathworks.com/help/matlab/ref/inv.html">Matlab</a>, and
+is available via a package in 
+<a href="https://web.archive.org/web/20190505200537/http://docs.scipy.org/doc/numpy/reference/routines.linalg.html#solving-equations-and-inverting-matrices">Python</a> and other popular languages.
+
+<h3> 
+    <p>Previous: <a href="kalman_11.html" rel="next">Linear Algebra</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_13.html" rel="next">Sensor Fusion Intro</a>
+</h3>
+
+<hr>
+
+<p id="fn13"><a href="#r13">[13]</a> Indeed, we can think of our original scalar form of these equations as a special 
+case of the linear-algebra form, with zeros in all but one position in each matrix.
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 20:05:37 May 05, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:31:04 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 81.959
+  exclusion.robots: 0.105
+  exclusion.robots.policy: 0.091
+  cdx.remote: 0.095
+  esindex: 0.014
+  LoadShardBlock: 48.012 (3)
+  PetaboxLoader3.datanode: 64.787 (4)
+  load_resource: 422.076
+  PetaboxLoader3.resolve: 375.284
+-->

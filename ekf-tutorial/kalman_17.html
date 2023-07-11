@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_17.html","20190530190827","https://web.archive.org/","web","/_static/",
+	      "1559243307");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20190530190827js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="//web.archive.org/web/20190530190827js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+<script type="text/javascript">
+
+var NUMOBS = 1000;
+var Q      = 0.005;
+var R      = 0.2;
+
+var x_signal = [];
+var xhat_signal = [];
+var z_signal = [];
+
+var xhat_linear_signal = [];
+
+function h1(x) {
+
+    x /= 10;
+    return Math.exp(2*x);
+}
+
+function dh1(x) {
+
+    x /= 10;
+    return 2*Math.exp(2*x);
+}
+
+function h2(x) {
+
+    return 10 * Math.log10(x);
+}
+
+function dh2(x) {
+
+    return 10 / (Math.log(10)*x);
+}
+
+function h3(x) {
+
+    return 10 * Math.exp(-x/10);
+}
+
+function dh3(x) {
+
+    return -Math.exp(-x/10);
+}
+
+function generateActual() {
+
+    x_signal = [];
+
+    for (k=0; k<NUMOBS; k++) {
+
+        // Use noisy sine wave for actual signal
+        x_signal[k] = 10 + 5*Math.sin(5*k/NUMOBS*Math.PI) + rand(Q);
+    }
+}
+
+function init() {
+
+    setLabeledSliderValue('c', 1.0);
+
+    setChecked('h1');
+
+    generateActual();
+
+    redraw();
+}
+
+function plotAllSignals() {
+
+    ylim   = 30;
+
+    ctx = clearCanvas('canvas1');
+    plotArray(ctx, x_signal, 'blue', 0, ylim);
+    plotArray(ctx, z_signal, 'red', 0, ylim);
+    plotArray(ctx, xhat_signal, 'green', 0, ylim);
+    plotArray(ctx, xhat_linear_signal, 'orange', 0, ylim);
+
+    ctx = clearCanvas('canvas2');
+    plotArray(ctx, sample, 'blue', arrayMin(sample), arrayMax(sample));
+}
+
+function redraw() {
+
+    // Clear the canvas
+    ctx1 = clearCanvas('canvas2');
+
+    // Used checked function
+    h  = h1;
+    dh = dh1;
+    if (isChecked('h2')) {
+        h  = h2;
+        dh = dh2;
+    }
+    if (isChecked('h3')) {
+        h  = h3;
+        dh = dh3;
+    }
+
+    // Initialize arrays
+    sample = [];
+    z_signal = [];
+
+    // Compute observation signal z
+    for (k=0; k<NUMOBS; ++k) {
+
+        x = (k+1) / NUMOBS;
+        sample.push(h(10*x));
+        z_signal.push(h(x_signal[k]) + rand(R));
+    }
+
+
+    // Initialize Kalman Filter
+    xhat_signal = [z_signal[0]]; // Use first observation as first estimate
+    p = 1;
+
+    // Run EKF
+    for (k=1; k<NUMOBS; ++k) {
+
+        // EKF Predict
+        xhat_signal[k] = xhat_signal[k-1];
+        p = p + Q;
+
+        // EKF first derivative
+        ck = dh(xhat_signal[k]);
+
+        // EKF update
+        g       = p  * ck / (ck * p * ck + R);
+        p       = (1 - g * ck) * p;
+        xhat_signal[k] += g * (z_signal[k] - h(xhat_signal[k]));
+    }
+
+    // Redraw the linear approximation
+    redrawLinear();
+}
+
+function redrawLinear() {
+
+    // Initialize Kalman Filter
+    xhat_linear_signal = [];
+    xhat_linear_signal = [z_signal[0]]; // Use first observation as first estimate
+    p = 1;
+
+    // Get Delta x from slider
+    c = getLabeledSliderValue('c');
+
+    // Run linear KF
+    for (k=1; k<NUMOBS; ++k) {
+
+        // Predict
+        xhat_linear_signal[k] = xhat_linear_signal[k-1];
+        p = p + Q;
+
+        // Update
+        g       = p  * c / (c * p * c + R);
+        p       = (1 - g * c) * p;
+        xhat_linear_signal[k] += g * (z_signal[k] - c*xhat_linear_signal[k]);
+    }
+
+    plotAllSignals();
+}
+ 
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 17: A Nonlinear Kalman Filter</h3>
+
+
+So what can we do with this first derivative?  Well, here is the set of equations for our
+linear Kalman Filter, using a model with no state transition or control signal,
+some process noise, a single sensor, and a single state value:
+
+<p>
+
+<i><b>Model</b></i>:
+
+\[x_k = x_{k-1} + w_k \]
+
+\[z_k = c x_k + v_k \]
+
+<p>
+
+<i><b>Predict</b></i>:
+
+\[\hat{x}_k = \hat{x}_{k-1}\]
+
+\[p_k = p_{k-1} + q\]
+
+<i><b>Update</b></i>:
+
+\[ g_k = p_k c (c p_k c + r)^{-1} \] 
+
+\[ \hat{x}_k \leftarrow \hat{x}_k + g_k(z_k - c \hat{x}_k) \]
+
+\[ p_k \leftarrow (1 - g_k c) p_k \]
+
+
+Now we'll modify these equations to reflect the nonlinearity of our sensor. Using a function 
+<font color="blue">$h$</font>
+to stand in for any nonlinear function (like $log_2$ in our example)
+<sup><a href="#fn16" id="r16">[16]</a></sup> , and 
+<font color="blue">$c_k$</font> to stand for its first derivative at timestep $k$, we get:
+
+<p>
+
+<i><b>Model</b></i>:
+
+\[x_k = x_{k-1} + w_k \]
+
+<div align="center">
+    $z_k = $ <font color="blue"> $h(x_k)$ </font> $ + v_k$
+</div>
+
+<p>
+
+<i><b>Predict</b></i>:
+
+\[\hat{x}_k = \hat{x}_{k-1}\]
+
+\[p_k = p_{k-1} + q\]
+
+<i><b>Update</b></i>:
+
+
+<div align="center">
+$g_k = p_k$ 
+<font color="blue">$c_k$</font> 
+$($ 
+<font color="blue">$c_k$</font> 
+$p_k$ 
+<font color="blue">$c_k$</font> 
+$+ r)^{-1}$
+<br><br>
+$\hat{x}_k \leftarrow \hat{x}_k + g_k(z_k-$ <font color="blue">$h(\hat{x}_k)$</font>)
+<br><br>
+$p_k \leftarrow (1 - g_k$ 
+<font color="blue">$c_k$</font> 
+$) p_k$
+</div>
+
+<p>
+
+Like our 
+<a href="kalman_14.html">sensor fusion demo</a>, the demo below shows a time-varying temperature fluctuation,
+but with a single sensor having nonlinear response and no bias.
+You can select from three different nonlinear sensor functions and compare our nonlinear
+Kalman filter to the linear version.  As you can see, no amount of adjustment of the $c$ parameter in
+the linear version is adequate to get as good a fit to the original signal as you can get with the
+nonlinear version.  The plot on the right shows the shape of the nonlinear function by itself, for reference:
+
+<p>
+
+<table>
+    <td> <canvas id="canvas1" width="500" height="300" style="border:1px solid #000000;"></canvas></td>
+    <td> <canvas id="canvas2" width="500" height="300" style="border:1px solid #000000;"></canvas></td>
+</table>
+
+<table>
+    <tr>
+        <td align="center"><font color="blue">$x_k$</font></td>
+        <td>&nbsp;&nbsp;</td>
+        <td align="center"><font color="red">$z_k$</font></td>
+        <td>&nbsp;&nbsp;</td>
+        <td align="center"><font color="green">$\hat{x}_k$</font></td>
+        <td>&nbsp;&nbsp;</td>
+        <td align="center"><font color="orange">$\hat{x}_k~~linear$</font></td>
+        <td>&nbsp;&nbsp;</td>
+        <td align="right"><font color="blue">$\hspace{3in}h(x)$</font></td>
+    </tr>
+</table>
+<p>
+<table>
+    <tr> <input type="radio" name="fun" id="h1" onchange="redraw();"> $h(x) = e^{2x}$ </tr>
+    <tr> <input type="radio" name="fun" id="h2" onchange="redraw();"> $h(x) = 10 log_{10}(x)$ </tr>
+    <tr> <input type="radio" name="fun" id="h3" onchange="redraw();"> $h(x) = 10 e^{-x/10}$ </tr>
+</table>
+
+<br>
+
+<table>
+<tr>
+<td><input type="range" min="0" max="2" value="1" id="c_slider" step=".01" onchange="redrawLinear();"></td> </tr>
+<tr>
+    <td align="center">Linear approximation $c$ = <b><output for="slider" id="c_value">0</output></b></td>
+</tr>
+</table>
+
+<p>
+
+
+<h3> 
+    <p>Previous: <a href="kalman_16.html" rel="next">Nonlinearity</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_18.html" rel="next">Computing the Derivative</a>
+</h3>
+
+<hr>
+
+    <p id="fn16"><a href="#r16">[16]</a> Why not call this function $f$? We will see why in a couple more pages.
+ 
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 19:08:27 May 30, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:32:55 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 82.544
+  exclusion.robots: 0.066
+  exclusion.robots.policy: 0.056
+  cdx.remote: 0.054
+  esindex: 0.009
+  LoadShardBlock: 51.988 (3)
+  PetaboxLoader3.datanode: 87.981 (4)
+  load_resource: 167.174
+  PetaboxLoader3.resolve: 127.109
+-->

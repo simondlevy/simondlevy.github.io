@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_10.html","20170125215811","https://web.archive.org/","web","/_static/",
+	      "1485381491");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="https://web.archive.org/web/20170125215811js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+</head>
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 10: Adding Velocity to the System</h3>
+
+Recall our original equation for the altitude of an airplane:
+
+<p>
+
+&nbsp; <b><i>altitude<sub>current</sub></i> = 0.98 * <i>altitude<sub>previous</sub></i>
+</b>
+
+<p>
+
+with the more general form:
+
+\[x_k = a x_{k-1} \]
+
+Thinking back to the math and physics you may have learned in high school, this kind of formula seems a bit
+odd.  Altitude, after all, is a kind of distance (above sea level, or above ground level), for which we learned 
+the formula
+
+<p>
+
+&nbsp; <i><b>distance = velocity * time</b></i>
+</b>
+
+<p>
+
+Can we reconcile these two different ways of thinking about distance?  The answer is yes, but it will
+require us to take two steps.  
+
+<p>
+
+First, we need to introduce the concepts <i>current time</i> and <i>previous time</i> into our 
+high-school formula, and think about distance in discrete time steps rather than overall distance:
+
+<p>
+
+&nbsp; <b><i>distance<sub>current</sub></i> =  <i>distance<sub>previous</sub></i> + 
+ <i>velocity<sub>previous</sub></i> * (<i>time<sub>current</sub></i> - <i>time<sub>previous</sub></i>)
+</b>
+
+<p>
+
+In other words, where we are now is where we were a moment ago, plus the distance we just traveled. If
+we perform this computation at regular time intervals, or timesteps (one second, 100 nanoseconds, six months, etc.), then
+we can simplify this to:
+
+<p>
+&nbsp; <b><i>distance<sub>current</sub></i> =  <i>distance<sub>previous</sub></i> + 
+ <i>velocity<sub>previous</sub></i> * <i>timestep</i>
+</b>
+<p>
+
+This equation moves us closer to our general form
+
+\[x_k = a x_{k-1} \]
+
+but we still seem to have two very different systems: one involves a simple product, and the other
+involves a product and a sum.  Coming up with a general equation for both brings us the second
+step: <i>linear algebra</i>.
+
+<h3> 
+    <p>Previous: <a href="kalman_09.html" rel="next">Modifying the Estimates</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_11.html" rel="next">Linear Algebra</a>
+</h3>
+
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 21:58:11 Jan 25, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:30:22 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 197.65
+  exclusion.robots: 0.13
+  exclusion.robots.policy: 0.117
+  cdx.remote: 0.065
+  esindex: 0.01
+  LoadShardBlock: 123.702 (3)
+  PetaboxLoader3.datanode: 426.654 (4)
+  load_resource: 370.079
+  PetaboxLoader3.resolve: 44.93
+-->

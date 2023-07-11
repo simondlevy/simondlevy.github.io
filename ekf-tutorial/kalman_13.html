@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_13.html","20161214104608","https://web.archive.org/","web","/_static/",
+	      "1481712368");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="https://web.archive.org/web/20161214104608js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+</head>
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 13: Sensor Fusion Intro</h3>
+
+So now we have a complete set of equations for our Kalman Filter in linear algebra (vector, matrix) form:
+
+<p>
+<i><b>Model</b></i>:
+
+\[x_k = A x_{k-1} + B u_k \]
+
+\[z_k = C x_k + v_k \]
+
+<p>
+
+<i><b>Predict</b></i>:
+
+\[\hat{x}_k = A \hat{x}_{k-1} + B u_k \]
+
+\[P_k = A P_{k-1} A^T \]
+
+<i><b>Update</b></i>:
+
+\[ G_k = P_k C^T (C P_k C^T + R)^{-1} \] 
+
+\[ \hat{x}_k = \hat{x}_k + G_k(z_k - C \hat{x}_k) \]
+
+ \[ P_k = (I - G_k C) P_k \]
+
+This seems like an awful lot of work just to be able to add a few extra items to our state variable!  In fact, 
+using linear algebra supports an extremely valuable capability of the Kalman Filter, called <i>sensor fusion</i>.
+
+<p>
+
+Returning to our airplane example, we note that pilots have access to much more information (observations) than
+just altitude: they also have gauges showing the plane's airspeed, groundspeed, heading, latitude and longitude,
+outside temperature, etc.  Imagine a plane with just three sensors, each of which corresponds to a given part of the
+state: a barometer for altitude, a compass for heading, and a 
+<a href="https://web.archive.org/web/20161214104608/http://en.wikipedia.org/wiki/Pitot_tube">Pitot tube</a> for airspeed.  Assume for the time being that
+these sensors are perfectly accurate (no noise).  Then our observation equation
+
+\[z_k = C x_{k-1} + v_k \]
+
+becomes
+
+\[
+\begin{bmatrix}
+       barometer_k\\
+       compass_k \\
+       pitot_k
+\end{bmatrix}
+ = 
+\begin{bmatrix}
+       1 &amp; 0 &amp; 0\\
+       0 &amp; 1 &amp; 0 \\
+       0 &amp; 0 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+       altitude_{k-1}\\
+       heading_{k-1} \\
+       airspeed_{k-1}
+\end{bmatrix}
+\]
+
+Now imagine we have another sensor for altitude, say a GPS.  Both the barometer and the GPS will be affected by altitude. So our equation becomes:
+
+\[
+\begin{bmatrix}
+       barometer_k\\
+       compass_k \\
+       pitot_k \\
+       gps_k
+\end{bmatrix}
+ = 
+\begin{bmatrix}
+       1 &amp; 0 &amp; 0\\
+       0 &amp; 1 &amp; 0 \\
+       0 &amp; 0 &amp; 1 \\
+       1 &amp; 0 &amp; 0
+\end{bmatrix}
+\begin{bmatrix}
+       altitude_{k-1}\\
+       heading_{k-1} \\
+       airspeed_{k-1}
+\end{bmatrix}
+\]
+
+Here we have our first example of a system without a simple one-to-one correspondence between sensors and state values.  
+<sup><a href="#fn14" id="r14">[14]</a></sup>. Any such system affords us with the opportunity for <i>sensor fusion</i>; 
+that is, the ability to combine readings from more than one sensor (barometer, GPS) to infer something about a 
+component (altitude) of the state.  
+
+<p>
+
+As when we seek a second doctor's opinion on a medical condition,
+our intuition tells us that it is better to have more than one source of information
+about something important.  In the next section, we will see how the Kalman Filter uses sensor fusion to
+ give us a better state estimate than we can get with a one sensor alone.
+
+<h3> 
+    <p>Previous: <a href="kalman_12.html" rel="next">Prediction and Update Revisited</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_14.html" rel="next">Sensor Fusion Example</a>
+</h3>
+
+<hr>
+<p id="fn14"><a href="#r14">[14]</a> Our $C$ matrix is somewhat unrealistic, in that the values would likely be something other than 1. 
+The point is that a nonzero value in the matrix corresponds to a relationship between a sensor and a component of the state vector.
+
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 10:46:08 Dec 14, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:31:32 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 481.556
+  exclusion.robots: 0.072
+  exclusion.robots.policy: 0.063
+  RedisCDXSource: 0.66
+  esindex: 0.008
+  LoadShardBlock: 447.126 (3)
+  PetaboxLoader3.resolve: 630.047 (3)
+  PetaboxLoader3.datanode: 90.263 (4)
+  load_resource: 290.965
+-->

@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_16.html","20180725110140","https://web.archive.org/","web","/_static/",
+	      "1532516500");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20180725110140js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="//web.archive.org/web/20180725110140js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+<script type="text/javascript">
+
+function init() {
+
+    setLabeledSliderValue('deltax', 20);
+
+    redraw();
+}
+
+
+function redraw() {
+
+    // Clear the canvas
+    ctx = clearCanvas("canvas");
+
+    // Get Delta x from slider
+    dx = getLabeledSliderValue("deltax");
+
+    // Track previous values for drawing line segments
+    xprev = 0;
+    yprev = 0;
+
+    // Draw transformed line on segment at a time
+    for (x=0; x<(ctx.canvas.width+dx); x += dx) {
+
+        // Scale (x,y) to interval (-1,+1)
+        xx = x / ctx.canvas.width;
+        y = ctx.canvas.height - xx*xx * ctx.canvas.height;
+
+        // Draw segment from previous point to current
+        if (x > 0) {
+
+            drawLine(ctx, xprev+1, yprev-1, x-1, y+1, 'green', 2);
+        }
+
+        // Track previous
+        xprev = x;
+        yprev = y;
+    }    
+}
+
+
+
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 16: Dealing with Nonlinearity</h3>
+
+Although nonlinearity introduces a whole new world of possible variations into any system, hope is not lost.
+As you may have noticed in the previous demo, the first three nonlinear examples have a useful property in
+common: they are all smoothly curved, as opposed to the final example, which has sharp turnaround.
+Mathematicians refer to such smoothly curving functions as 
+<a href="https://web.archive.org/web/20180725110140/http://en.wikipedia.org/wiki/Differentiable_function"><i>differentiable</i></a>.
+As anyone who has studied calculus can attest, differentiable functions (smooth curves) can be modeled
+to an arbitrary degree of precision by a sequence of successively smaller line segments.  Even without
+calculus, you can see this in the demo below, which allows you to approximate the function $f(x) = x^2$
+by adjusting the size of the line segment $\Delta x$:
+
+<p>
+
+<canvas id="canvas" width="500" height="300" style="border:1px solid #000000;"></canvas>
+
+<table>
+<tr>
+<td><input type="range" min="1" max="100" value="20" id="deltax_slider" step="1" onchange="redraw();"></td>
+</tr>
+<tr>
+<td align="center"><b>$\Delta x$ = <output for="slider" id="deltax_value">0</output></b></td>
+</tr>
+</table>
+
+<p>
+
+So how does this line-segment trick help handle nonlinear relationships in our Kalman Filter?  
+Consider a very simple filter with the following linear equation for its sensor:
+
+\[ z_k = 3 x_k +2 \]
+
+This equations says that the sensor reading is always three times the corresponding state value, plus two:
+<i>no matter what the state value, the sensor reading is always three times that value plus two</i>.
+Now consider a nonlinear sensor equation:
+
+\[ z_k = log_2(x_k)\]
+
+This equation says that the sensor reading is the logarithm (to the base 2) of the state value: a typical
+relationship, for example, in our sensation of 
+<a href="https://web.archive.org/web/20180725110140/http://www.indiana.edu/~emusic/acoustics/pitch.htm">pitch</a> as a function of frequency.
+Even if you've never heard of a logarithm before, a quick look a the following table of approximate
+values shows that the relationship between the state $x_k$ and the sensor reading $z_k$ is not as straightforward
+as the previous one:
+
+<table border="1" align="center">
+<tr> 
+    <td>$x_k$</td>
+    <td>1.0</td>
+    <td>2.0</td>
+    <td>3.0</td>
+    <td>4.0</td>
+    <td>5.0</td>
+    <td>6.0</td>
+    <td>7.0</td>
+    <td>8.0</td>
+    <td>9.0</td>
+    <td>10</td>
+    <td>11</td>
+    <td>12</td>
+    <td>13</td>
+    <td>14</td>
+    <td>15</td>
+    <td>16</td>
+    <td>17</td>
+    <td>18</td>
+    <td>19</td>
+    <td>20</td>
+</tr>
+<tr> <td>$z_k$</td>
+    <td>0.0</td>
+    <td>1.0</td>
+    <td>1.6</td>
+    <td>2.0</td>
+    <td>2.3</td>
+    <td>2.6</td>
+    <td>2.8</td>
+    <td>3.0</td>
+    <td>3.2</td>
+    <td>3.3</td>
+    <td>3.5</td>
+    <td>3.6</td>
+    <td>3.7</td>
+    <td>3.8</td>
+    <td>3.9</td>
+    <td>4.0</td>
+    <td>4.1</td>
+    <td>4.2</td>
+    <td>4.2</td>
+    <td>4.3</td>
+</tr>
+</table>
+
+<p>
+
+Here, you can see that there are no constants $a$ and such that $z_k = a x_k + b$.
+We can, however, use our line-segment insight from above to derive a different set
+of values $a_k$ and $b_k$, one for each timestep, that approximates such a relationship.
+If you studied calculus, you may remember that we can compute the <i>first derivative</i>
+of many nonlinear functions ($log$, $sin$, $cos$, etc.) directly.  If you didn't
+study calculus, don't feel bad: the first derivative of a function is really just the
+best linear (line-segment) approximation to that function at each given point.  
+A little Googling reveals that the first derivative of $log_2(x)$ is approximately
+$1 / 0.693x$, which makes sense: as $x$ increases, the value of $log_2(x)$ goes up
+more and more gradually.
+
+<h3> 
+    <p>Previous: <a href="kalman_15.html" rel="next">Nonlinearity</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_17.html" rel="next">A Nonlinear Kalman Filter</a>
+</h3>
+
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 11:01:40 Jul 25, 2018 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:32:33 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 80.582
+  exclusion.robots: 0.215
+  exclusion.robots.policy: 0.193
+  cdx.remote: 0.134
+  esindex: 0.019
+  LoadShardBlock: 47.776 (3)
+  PetaboxLoader3.datanode: 111.941 (4)
+  load_resource: 158.503
+  PetaboxLoader3.resolve: 71.731
+-->

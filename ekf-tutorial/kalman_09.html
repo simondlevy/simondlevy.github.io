@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_09.html","20170125220134","https://web.archive.org/","web","/_static/",
+	      "1485381694");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20170125220134js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="https://web.archive.org/web/20170125220134js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+
+<script type="text/javascript">
+
+
+function initValue(tag, value) {
+
+    slider = document.getElementById(tag.concat('slider')); 
+    slider.value = value;
+    document.querySelector('#'.concat(tag)).value = value;
+}
+function random(variance) {
+
+    return 2 * variance * Math.random() - variance;
+}
+
+function init() {
+
+    initValue('a', 0.95); 
+    initValue('b', 0.5); 
+    initValue('c', 1.0); 
+    initValue('r', 100); 
+    run();
+}
+
+function plotMyArray(array, color) {
+
+    plotArray(getCanvasContext(), array, color, 0, 1200);
+}
+
+
+function run() {
+
+    // Arbitrary constants
+    x = 1000;
+    n = 100;
+
+    // Constants from slider values
+    a = getFloatValue("a");
+    b = getFloatValue("b");
+    c = getFloatValue("c");
+    r = getFloatValue("r");
+ 
+    // Initialize arrays for plot
+    x_array = [];
+    z_array = [];
+
+    // Clear previous plot
+    ctx = getCanvasContext();
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+    // Draw axes
+    var w = ctx.canvas.width;
+    var h = ctx.canvas.height;
+    ctx.beginPath();
+    ctx.strokeStyle = "gray";
+    ctx.moveTo(0,h); ctx.lineTo(w,h);   // X axis
+    ctx.moveTo(0,0); ctx.lineTo(0,h);   // Y axis
+    ctx.stroke();
+
+    // Compute state, observation signals
+    for (k = 0; k < n; k++) { 
+
+        // Arbitrary upward control signal
+        u = k;
+
+        // Noise
+        v = random(r);
+
+        // Update state
+        x = a*x + b*u;
+
+        // Update observation
+        z = c*x + v;
+
+        // Append values to arrays for plotting
+        x_array.push(x);
+        z_array.push(z);
+    }
+
+    // Plot state, observation
+    plotMyArray(x_array, "blue");
+    plotMyArray(z_array, "red");
+
+   // Initialize state estimate and error covariance
+    xhat = z_array[0];
+    p = 1;
+
+    // Initialize array of state estimates
+    xhat_array = [xhat];
+
+    // Compute estimated state signal
+    for (k = 1; k < n; k++) {
+
+        // Arbitrary upward control signal
+        u = k;
+
+        // Get values from array
+        z    = z_array[k];
+
+        // Compute new values using Kalman filter formulas: based on 
+        // http://en.wikipedia.org/wiki/Kalman_filter#Update
+
+        // Predict
+        xhat = a*xhat + b*u;
+        p    = a*p*a;
+
+        // Update
+        g    = p == 0 ? 1 : p*c  / (c*p*c  + r);
+        xhat = xhat + g * (z - c*xhat);
+        p    = (1 - g*c) * p;
+
+        // Append value to array for plotting
+        xhat_array.push(xhat);
+    }
+
+    // Plot estimated state signal
+    plotMyArray(xhat_array, "green");
+ }
+
+function update(tag, value) {
+
+  document.querySelector('#'.concat(tag)).value = value;
+
+  run();
+}
+
+
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 9: Modifying the Estimates</h3>
+
+Here again our more realistic / more general equations for the state and observation variables of our system:
+
+\[ x_k = a x_{k-1} + b u_k\]
+
+\[ z_k = c x_k + v_k\]
+
+As we might expect, the introduction of these new components into our model requires a corresponding 
+modification to the prediction and update equations:  
+
+<p>
+
+<i><b>Predict</b></i>:
+
+<div align="center">
+    $\hat{x}_k = a\hat{x}_{k-1}$ <font color="blue">$ + b u_k $</font>
+</div>
+\[p_k = ap_{k-1}a \]
+
+<i><b>Update</b></i>:
+
+<div align="center">
+ $g_k = p_k$ <font color="blue">$c$</font> $/ ($<font color="blue">$c$</font> $p_k$ <font color="blue">$c$</font>$~+~r)$ 
+ <p>
+ $\hat{x}_k = \hat{x}_k + g_k(z_k - $<font color="blue">$c$</font> $\hat{x}_k)$
+ <p>
+ $p_k = (1 - g_k $<font color="blue">$c$</font>) $p_k$
+ </div>
+
+Here is an extension of our airplane demo, showing a longer duration of time and
+adding in a control signal representing the pilot
+steadily pulling back on the control column to raise the altitude of the plane.  Try moving
+around the sliders to adjust the values of the different constants.
+As in the previous demo, the original signal is shown blue, the observed signal in red, 
+and the Kalman-filtered signal in green.
+
+<br><br>
+
+ <canvas id="canvas" width="500" height="200"></canvas>
+
+<table>
+    
+<tr>
+
+<td> 
+<input type="range" min="0" max="1" id="aslider" step=".01" onchange="update('a', value)">
+$a =$
+<b><output for="aslider" id="a">0.95</output></b>
+</td> 
+
+<td></td>
+
+<td>
+<input type="range" min="0" max="200" id="rslider" step="1" onchange="update('r', value)">
+$r = $
+<b><output for="bslider" id="r">100</output></b>
+</td>
+
+</tr>
+ 
+<tr>
+    
+<td>
+<input type="range" min="0" max="1" id="bslider" step=".01" onchange="update('b', value)">
+$b =$
+<b><output for="bslider" id="b">0.5</output></b>
+</td>
+
+</tr>
+
+<tr>
+<td>
+<input type="range" min="0.5" max="1.5" id="cslider" step=".01" onchange="update('c', value)">
+$c =$
+<b><output for="cslider" id="c">1.0</output></b>
+</td>
+
+<td></td>
+<td>
+ &nbsp; &nbsp; <button onclick="init()">Reset</button>
+</td>
+</tr>
+
+</table>
+
+<br>
+
+<h3> 
+    <p>Previous: <a href="kalman_08.html" rel="next">A More Realistic Model</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_10.html" rel="next">Adding velocity to the system</a>
+</h3>
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 22:01:34 Jan 25, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:30:03 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 110.407
+  exclusion.robots: 0.087
+  exclusion.robots.policy: 0.077
+  RedisCDXSource: 0.62
+  esindex: 0.01
+  LoadShardBlock: 76.013 (3)
+  PetaboxLoader3.datanode: 95.467 (4)
+  load_resource: 88.811
+  PetaboxLoader3.resolve: 51.197
+-->

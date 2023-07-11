@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_15.html","20170110124500","https://web.archive.org/","web","/_static/",
+	      "1484052300");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20170110124500js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="https://web.archive.org/web/20170110124500js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+<script type="text/javascript">
+
+function f1x(x, y) {
+
+    return Math.sin(2*Math.PI*x + Math.PI*y);
+}
+
+function f1y(x, y) {
+
+    return Math.cos(Math.PI*x + Math.PI*y);
+}
+
+function f2x(x, y) {
+
+    return x*y*y;
+}
+
+function f2y(x, y) {
+
+
+    return x + y*y;
+}
+
+function f3x(x, y) {
+
+    return 1 / (1 + Math.exp(-4*y));
+}
+
+function f3y(x, y) {
+
+    return x;
+}
+
+function f4x(x, y) {
+
+    return y;
+}
+
+function f4y(x, y) {
+
+    return Math.abs(x+y);
+}
+
+
+
+function init() {
+
+    resetLinear();
+
+    document.getElementById("f1").checked = true;
+
+    redrawNonlinear();
+}
+
+function redrawThinLinear() {
+
+    // Get slider values
+    a = getLabeledSliderValue('a');
+    b = getLabeledSliderValue('b');
+    c = getLabeledSliderValue('c');
+    d = getLabeledSliderValue('d');
+
+    // Clear the canvas
+    ctx = clearCanvas("canvas1");
+
+    // Endpoints
+    x1 = -1;
+    y1 = -1;
+    x2 = +1;
+    y2 = +1;
+
+    drawScaledLine(ctx, x1, y1, x2, y2, 'blue');
+
+    xx1 = a*x1 + b*y1;
+    yy1 = c*x1 + d*y1;
+    xx2 = a*x2 + b*y2;
+    yy2 = c*x2 + d*y2;
+
+    drawScaledLine(ctx, xx1, yy1, xx2, yy2, 'green');
+}
+
+function redrawNonlinear() {
+
+    // Clear the canvas
+    ctx = clearCanvas("canvas2");
+
+    // Endpoints
+    x1 = -1;
+    y1 = -1;
+    x2 = +1;
+    y2 = +1;
+
+    // Draw original line in one stroke
+    drawScaledLine(ctx, x1, y1, x2, y2, 'blue');
+
+    // Used checked function
+    fx = f1x;
+    fy = f1y;
+    if (isChecked("f2")) {
+        fx = f2x;
+        fy = f2y;
+    }
+    if (isChecked("f3")) {
+        fx = f3x;
+        fy = f3y;
+    }
+    if (isChecked("f4")) {
+        fx = f4x;
+        fy = f4y;
+    }
+
+
+    // Need to track previous point for drawing nonlinear
+    xxprev = 0;
+    yyprev = 0;
+
+    // Draw transformed line on segment at a time
+    for (k=0; k<ctx.canvas.width; ++k) {
+
+        // Scale (x,y) to interval (-1,+1)
+        x = x1 + (x2-x1) * k/ctx.canvas.width;
+        y = y1 + (y2-y1) * k/ctx.canvas.height;
+
+        // Transform nonlinearly
+        xx = fx(x, y);
+        yy = fy(x, y);
+
+        // Draw segment from previous point to current
+        if (k > 0) {
+
+            drawScaledLine(ctx, xxprev, yyprev, xx, yy, 'green');
+        }
+
+        // Track previous
+        xxprev = xx;
+        yyprev = yy;
+    }    
+}
+
+function resetLinear() {
+
+    setLabeledSliderValue('a', 0.5);
+    setLabeledSliderValue('b', 0.5);
+    setLabeledSliderValue('c', 0.2);
+    setLabeledSliderValue('d', 0.4);
+
+    redrawThinLinear();
+}
+
+
+function scale(x, dim) {
+
+    MARG = 50;
+
+    return MARG + ((x+1)/2) * (dim-2*MARG);
+}
+
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 15: Nonlinearity</h3>
+
+By now it should be obvious that linear algebra is pretty awesome, letting us express a sophisticated
+algorithm like the Kalman Filter in a very compact form.  Linear algebra is however not the whole story.
+As its name suggests, linear algebra is limited to representing relationships that are linear, i.e.,
+characterized by a straight line.  To see this, consider again our simple example of matrix * vector
+multiplication:
+
+\[
+\begin{bmatrix}
+       a &amp; b \\
+       c &amp; d
+\end{bmatrix}
+\begin{bmatrix}
+       x \\
+       y 
+\end{bmatrix} 
+=
+\begin{bmatrix}
+       ax + by \\
+       cx + dy
+\end{bmatrix}
+\]
+
+The demo below allows you to adjust the values of the constants $a$, $b$, $c$, and $d$ to see how the resulting
+vector changes, for an arbitrary line segment containing points $(x,y$).  As you can see, all settings result in 
+another straight line segment:
+
+<p>
+
+<table>
+<td>
+<canvas id="canvas1" width="250" height="250" style="border:1px solid #000000;"></canvas>
+</td>
+<td>
+<table>
+<tr>
+<td><input type="range" min="-1" max="+1" value="0" id="a_slider" step=".005" onchange="redrawThinLinear();"></td>
+<td><input type="range" min="-1" max="+1" value="0" id="b_slider" step=".005" onchange="redrawThinLinear();"></td>
+</tr>
+<tr>
+<td align="center"><b>a = <output for="a_slider" id="a_value">0</output></b></td>
+<td align="center"><b>b = <output for="b_slider" id="b_value">0</output></b></td>
+</tr>
+<tr>
+<td><input type="range" min="-1" max="+1" value="0" id="c_slider" step=".005" onchange="redrawThinLinear();"></td>
+<td><input type="range" min="-1" max="+1" value="0" id="d_slider" step=".005" onchange="redrawThinLinear();"></td>
+</tr>
+<tr>
+<td align="center"><b>c = <output for="c_slider" id="c_value">0</output></b></td>
+<td align="center"><b>d = <output for="d_slider" id="d_value">0</output></b></td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td align="center"><button onclick="resetLinear()">Reset</button></td></tr>
+</table>
+</td>
+</table>
+
+
+ <font color="blue">$(x,y)$</font>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color="green">$(ax + by, cx + dy)$</font>
+
+
+
+
+<table>
+
+</tr>
+</table>
+
+<p>
+
+On the other hand, go outside and take a walk, and you'll appreciate that very little in nature is linear.  
+The things you'll see with straight lines &ndash; buildings, roads, telephone poles, and the like &ndash;
+are mostly man-made, and most of everything else (trees, birds, clouds) is curved or
+<a href="https://web.archive.org/web/20170110124500/http://www.mnn.com/earth-matters/wilderness-resources/blogs/14-amazing-fractals-found-in-nature">fractal</a>.
+And because sensors and motors and other artifacts are made from physical materials, their behavior likewise 
+tends toward nonlinearity, outside some limited range.
+
+<p>
+
+Pretty much all the functions
+you learned about in high-school math, like $f(x) = ax^2 + bx+c$, $f(x) = sin(x)$, $log(x)$, etc., are 
+nonlinear, so there's a wide variety to choose from. The demo below allows you to pass the line segment from 
+the previous demo through a few different nonlinear functions that I chose for their interesting appearance:
+<p>
+
+<table>
+<td>
+<canvas id="canvas2" width="250" height="250" style="border:1px solid #000000;"></canvas>
+</td>
+
+<td>
+<table>
+<tr>
+<td>
+ <input type="radio" name="fun" id="f1" onchange="redrawNonlinear();">
+ $f(\begin{bmatrix} x \\ y \end{bmatrix}) = \begin{bmatrix} sin(2\pi x + \pi y)\\ cos(\pi x + \pi y) \end{bmatrix}$
+</td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr>
+<td>
+<input type="radio" name="fun" id="f2" onchange="redrawNonlinear();">
+ $f(\begin{bmatrix} x \\ y \end{bmatrix}) = \begin{bmatrix}xy^2 \\  x + y^2\end{bmatrix}$
+</td>
+</tr>
+</table>
+</td>
+
+<td>
+<table>
+<tr>
+<td>
+ <input type="radio" name="fun" id="f3" onchange="redrawNonlinear();">
+ $f(\begin{bmatrix} x \\ y \end{bmatrix}) = \begin{bmatrix} (1 + e^{-4y})^{-1} \\ x \end{bmatrix}$
+</td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr>
+<td>
+<input type="radio" name="fun" id="f4" onchange="redrawNonlinear();">
+ $f(\begin{bmatrix} x \\ y \end{bmatrix}) = \begin{bmatrix}y \\  abs(x+y)\end{bmatrix}$
+</td>
+</tr>
+</table>
+</td>
+
+
+
+</table>
+
+
+ <font color="blue">$(x,y)$</font>
+&nbsp; &nbsp; &nbsp; &nbsp; <font color="green">$f(x, y)$</font>
+
+<table>
+
+</tr>
+</table>
+
+<h3> 
+    <p>Previous: <a href="kalman_14.html" rel="next">Sensor Fusion Example</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_16.html" rel="next">Dealing with Nonlinearity</a>
+</h3>
+
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 12:45:00 Jan 10, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:32:11 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 76.712
+  exclusion.robots: 0.152
+  exclusion.robots.policy: 0.138
+  cdx.remote: 0.091
+  esindex: 0.012
+  LoadShardBlock: 38.225 (3)
+  PetaboxLoader3.datanode: 72.054 (4)
+  load_resource: 280.338
+  PetaboxLoader3.resolve: 223.333
+-->

@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_04.html","20190609092904","https://web.archive.org/","web","/_static/",
+	      "1560072544");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="//web.archive.org/web/20190609092904js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+
+
+<script type="text/javascript">
+
+function outputUpdate(gain) {
+
+  document.querySelector('#gain').value = gain;
+  var xk1 = 110;
+  var zk = 105;
+  document.querySelector('#estimate').value = xk1 + gain * (zk - xk1);
+}
+
+
+</script>
+
+
+</head>
+<body onload="var gain = 0.5; var slider = document.getElementById('slider'); slider.value = gain; outputUpdate(gain)">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 4: State Estimation</h3>
+
+Here again (ignoring process noise) are our two equations describing the state of a system we are observing:
+
+\[
+\begin{aligned}
+x_k &amp; = a x_{k-1} + w_k\\
+z_k &amp; = x_k + v_k \\
+\end{aligned} 
+\]
+
+Since our goal is to obtain the states $x$ from the observations $z$, we could rewrite the second equation as:
+
+\[
+\begin{aligned}
+x_k &amp; = z_k - v_k
+\end{aligned} 
+\]
+
+The problem of course is that we don't know the current noise $v_k$: it is by definition
+unpredictable.  Fortunately, <a href="https://web.archive.org/web/20190609092904/http://en.wikipedia.org/wiki/Rudolf_E._K%C3%A1lm%C3%A1n">Kalman</a> 
+had the insight that we can <i>estimate</i> the state by taking into account both the current observation
+and the previous estimated state.  Engineers use a little caret or &ldquo;hat&rdquo; ^ over a variable to 
+show that it is estimated: so $\hat{x}_k$ is the estimate of the current state.  Then we can express the estimate 
+as a tradeoff between the previous estimate and the current observation:
+
+<font color="red">
+
+\[
+\begin{aligned}
+\hat{x}_k &amp; = \hat{x}_{k-1} + g_k(z_k - \hat{x}_{k-1})
+\end{aligned} 
+\]
+
+</font>
+
+where $g$ is a &ldquo;gain&rdquo; term expressing the tradeoff.<sup><a href="#fn5" id="r5">[5]</a></sup>  
+I've highlighted this equation in red because it is one that we will use directly in implementing  our
+Kalman filter.
+<p>
+Now, this all looks rather complicated, but think of what happens for two extreme values of the gain
+$g_k$.  For $g_k = 0$, we get
+
+\[
+\begin{aligned}
+\hat{x}_k &amp; = \hat{x}_{k-1} + 0(z_k - \hat{x}_{k-1}) = \hat{x}_{k-1}
+\end{aligned} 
+\]
+
+In other words, when the gain is zero, observation has no effect, and we get the  original equation relating the
+current state to the previous.  For $g_k = 1$ we get
+
+\[
+\begin{aligned}
+\hat{x}_k &amp; = \hat{x}_{k-1} + 1(z_k - \hat{x}_{k-1}) = \hat{x}_{k-1} + z_k - \hat{x}_{k-1} = z_k
+\end{aligned} 
+\]
+
+In other words, when the gain is one, the previous state doesn't matter, and we get the current state
+estimation entirely from the current observation.
+
+<p>
+
+Of course, the actual gain value will likely fall somewhere between these two extremes.  Try moving the slider below to see the effect of gain on current state estimation:
+
+<p>
+
+<table>
+<tr>
+<td>$x_{k-1} = 110$ &nbsp; &nbsp; &nbsp;</td>
+<td>$z_k = 105$ &nbsp; &nbsp; &nbsp;</td>
+<td> &nbsp; &nbsp; &nbsp; &nbsp; $g_k =$ <b><output for="slider" id="gain">0.5</output></b></td>
+<td>$\hat{x}_k = $<b><output id="estimate">7.5</output></b></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><input type="range" min="0" max="1" id="slider" step=".01" onchange="outputUpdate(value)"></td>
+</tr>
+
+</table>
+
+
+<h3> 
+    <p>Previous: <a href="kalman_03.html" rel="next">Putting it Together</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_05.html" rel="next">Computing the Gain</a>
+</h3>
+
+<hr>
+
+
+<p id="fn5"><a href="#r5">[5]</a>  The variable $k$ is usually used for gain, 
+because it is known as the <i>Kalman gain</i>.  With due respect to Rudolf Kalman, I find it confusing to use 
+the same letter for a variable and a subscript, so I have opted for the letter $g$ instead.
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 09:29:04 Jun 09, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:27:50 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 125.376
+  exclusion.robots: 0.202
+  exclusion.robots.policy: 0.181
+  cdx.remote: 0.129
+  esindex: 0.018
+  LoadShardBlock: 84.346 (3)
+  PetaboxLoader3.datanode: 54.035 (4)
+  PetaboxLoader3.resolve: 87.428 (2)
+  load_resource: 71.315
+-->

@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_08.html","20170125215806","https://web.archive.org/","web","/_static/",
+	      "1485381486");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="https://web.archive.org/web/20170125215806js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+
+</head>
+<body onload="var start = 0; draw(start); var slider = document.getElementById('slider'); slider.value = start">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 8: A More Realistic Model</h3>
+
+Recall the two equations describing our system:
+
+\[x_k = a x_{k-1}\]
+\[z_k = x_k + v_k \]
+
+where $x_k$ is the current state of our system, $x_{k-1}$ is its previous state, $a$ is some constant,
+$z_k$ is our current observation of the system, and 
+$v_k$ is the current noise (inaccuracy) associated with the observation.
+
+<p>
+
+Although these two equations apply well to many kinds of systems, they are sometimes not the whole story.
+For one thing, we have not accounted for the time-varying <i>control</i> that the pilot exercises over the airplane,
+by (for example) moving the 
+<a href="https://web.archive.org/web/20170125215806/http://en.wikipedia.org/wiki/Yoke_%28aeronautics%29"> control column</a>
+forward and back.  To account for the control we introduce another subscripted variable $u_k$,
+representing the current value of the <i>control signal</i> that the pilot is sending to the
+airplane. Just as the previous state $x_{k-1}$ was scaled by a constant amount $a$,
+this control signal can be scaled by a constant amount if we like; call it $b$.
+So our complete equation for the state becomes
+
+<div align="center">
+$x_k = a x_k$ <font color="blue">$~+~b u_k$</font>
+</div>
+
+<p>
+
+with the new component highlighted in blue.
+
+<p>
+
+In general, any signal other than noise can be scaled by some constant, so our equation for the observation 
+$z_k$ can be rewritten thus: <sup><a href="#fn11" id="r11">[11]</a></sup>
+
+<div align="center">
+    $z_k =$ <font color="blue"> $c$</font> $x_k + v_k$
+</div>
+
+<p>
+<p>
+
+<h3> 
+    <p>Previous: <a href="kalman_07.html" rel="next">Running the Filter</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_09.html" rel="next">Modifying the Estimates</a>
+</h3>
+
+<hr>
+
+<p id="fn11"><a href="#r11">[11]</a> For the sake of consistency with the original example I have chosen to use 
+variables $a$, $b$, and $c$ here for the constants, instead of the more common $f$, $b$, and $h$.
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 21:58:06 Jan 25, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:29:36 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 140.507
+  exclusion.robots: 0.095
+  exclusion.robots.policy: 0.087
+  cdx.remote: 0.057
+  esindex: 0.01
+  LoadShardBlock: 104.653 (3)
+  PetaboxLoader3.datanode: 157.265 (4)
+  load_resource: 99.421
+  PetaboxLoader3.resolve: 30.522
+-->

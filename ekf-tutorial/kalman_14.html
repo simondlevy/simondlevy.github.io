@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_14.html","20180725110135","https://web.archive.org/","web","/_static/",
+	      "1532516495");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20180725110135js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="//web.archive.org/web/20180725110135js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+<script type="text/javascript">
+
+var NUMOBS = 1000;
+
+var x_signal = [];
+var xhat_signal = [];
+var z_signal = [];
+
+function bias1Update(bias1) {
+
+    sliderUpdate('bias1_value', bias1);
+    generateZ1();
+    runKalman();
+}
+
+function bias2Update(bias2) {
+
+    sliderUpdate('bias2_value', bias2);
+    generateZ2();
+    runKalman();
+}
+
+function generateActual() {
+
+    x_signal = [];
+
+    // Get process noise covariance
+    q = getFloatValue('q_value');
+
+    for (k=0; k<NUMOBS; k++) {
+
+        // Use noisy sine wave for actual signal
+        x_signal[k] = 20 + Math.sin(5*k/NUMOBS*Math.PI) + rand(q);
+    }
+}
+
+
+function generateAll() {
+
+  generateActual();
+  generateObservations();
+  runKalman();
+}
+
+function generateObservations() {
+
+    generateZ1();
+    generateZ2();
+}
+
+function generateZ(bias_name, r_name, j) {
+
+    
+    // Get biases
+    bias = getFloatValue(bias_name);
+
+    // Get measurement noise covariances
+    r = getFloatValue(r_name);
+
+    // Generate signals
+    for (k=0; k<NUMOBS; k++) {
+
+        z_signal[j][k] = bias + x_signal[k] + rand(r);
+    }
+}
+
+function generateZ1() {
+
+    generateZ('bias1_value', 'r1_value', 0);
+}
+
+
+function generateZ2() {
+
+    generateZ('bias2_value', 'r2_value', 1);
+}
+
+function getCanvasContext() {
+
+    return document.getElementById("canvas").getContext("2d");
+}
+
+
+function init() {
+
+  // Initialize sliders
+  setSlider('bias1_slider', -1);
+  setSlider('bias2_slider', +1);
+  setSlider('r1_slider', 0.64);
+  setSlider('r2_slider', 0.64);
+  setSlider('q_slider', 0.05);
+
+  // Initialize signals to 0
+  x_signal = [];
+  xhat_signal = [];
+  z_signal[0] = [];
+  z_signal[1] = [];
+  z_signal.push([]);
+  z_signal.push([]);
+  for (k=0; k<NUMOBS; k++) {
+      x_signal.push(0);
+      xhat_signal.push(0);
+      z_signal[0].push(0);
+      z_signal[1].push(0);
+  }
+
+  // Generate all signals
+  generateAll();
+}
+
+
+function plot(signal, color) {
+
+    minval = 15;
+    maxval = 25;
+
+    ctx = getCanvasContext();
+
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+
+    x = 0;
+    y = valToPix(signal[0], ctx, minval, maxval);
+
+    ctx.moveTo(x, y);
+
+    for (k=1; k<signal.length; ++k) {
+
+        x += (ctx.canvas.width) / signal.length;
+        y = valToPix(signal[k], ctx, minval, maxval);
+    
+        ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+}
+
+
+function plotIfChecked(signal, id, color) {
+
+    if (document.getElementById(id).checked) {
+        plot(signal, color);
+    }
+}
+
+function qUpdate(q) {
+
+    sliderUpdate('q_value', q);
+
+    generateAll();
+}
+
+function r1Update(r1) {
+
+    sliderUpdate('r1_value', r1);
+    generateZ1();
+    runKalman();
+}
+
+function r2Update(r2) {
+
+    sliderUpdate('r2_value', r2);
+    generateZ2();
+    runKalman();
+}
+
+function runKalman() {
+
+    // Get R matrix diagonal
+    r1 = getFloatValue('r1_value');
+    r2 = getFloatValue('r2_value');
+
+    // Start with average of first sensor values
+    xhat_signal[0] = (z_signal[0][0] + z_signal[1][0]) / 2;
+
+    // Initialize P
+    p = 1;
+
+    // Run Kalman filter
+    for (k = 1; k < NUMOBS; k++) {
+
+    	// Predict
+
+    	xhat_signal[k] = xhat_signal[k-1];
+    	p += q;
+    
+    	// Update, simulating 2x2 matrix inversion
+
+	a = p + r1;
+	d = p + r2;
+
+	e = p / (a*d-p*p);
+
+	g1 = e*d - e*p;
+	g2 = e*a  -e*p;
+
+        p = (1 - (g1+g2)) * p;
+
+        xhat_signal[k] =  xhat_signal[k] + g1*(z_signal[0][k]-xhat_signal[k]) + g2*(z_signal[1][k]-xhat_signal[k]);
+    }
+
+    replot();
+}
+
+function replot() {
+
+    // Clear the canvas
+    ctx = getCanvasContext();
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+    // Plot signals as requested
+    plotIfChecked(x_signal,  'plot_actual',  'blue');
+    plotIfChecked(z_signal[0], 'plot_sensor1', 'red');
+    plotIfChecked(z_signal[1], 'plot_sensor2', 'magenta');
+    plotIfChecked(xhat_signal, 'plot_estimated', 'green');
+}
+
+
+function setSlider(name, value) {
+
+  var slider = document.getElementById(name).value = value;
+}
+
+function sliderUpdate(name, value) {
+
+  document.querySelector('#'.concat(name)).value = value;
+}
+
+function valToPix(val, ctx, minval, maxval) {
+
+    h = ctx.canvas.height;
+
+    return h - (val - minval) / (maxval - minval) * h;
+}
+
+
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 14: Sensor Fusion Example</h3>
+
+To get a feel for how sensor fusion works, let's restrict ourselves again to a system with 
+just one state value.<sup><a href="#fn15" id="r15">[15]</a></sup>
+To simplify things even further, we'll assume we have no knowledge of the state-transition model
+($A$ matrix) and so have to rely only on the sensor values.  Perhaps we are measuring the
+temperature outside with two different thermometers.  So we'll just set our state-transition matrix 
+to 1:
+
+\[\hat{x}_k = A \hat{x}_{k-1} = 1 * \hat{x}_{k-1} = \hat{x}_{k-1}\]
+
+Lacking a state-transition model for our thermometer, we just assume that the current state is the same
+as the previous state.
+
+<p>
+
+For sensor fusion we will of course need more than one sensor value in our observation vector $z_k$,
+which for this example we can treat as the current readings of our two thermometers.  We'll assume
+that both sensors contribute equally to our temperature estimation, so our $C$ matrix is just a pair of
+1's:
+
+
+\[ z_k = C x_k + v_k = \begin{bmatrix} 1 \\ 1 \end{bmatrix} x_k + v_k\]
+
+We now have two matrices ($A$, $C$) of the three ($A$, $C$, $R$) that we need for the prediction
+and update equations.  So how do we obtain $R$?
+
+<p>
+
+Recall that for our single-sensor example, we defined $r$ as the <i>variance</i> of the observation noise
+signal $v_k$; that is, how much it varies around its mean (average) value. For a system with more than two
+sensors, $R$ is a matrix containing the <i>covariance</i> between each pair of sensors.  The elements on the
+diagonal of this matrix will be the $r$ value for each sensor, i.e., that sensor's variance with itself.  Elements
+off the diagonal represent how much one sensor's noise varies with another's.  For this example, and
+many real-world applications, we assume that such values are zero.   Let's say that we've observed both our
+thermometers under climate-controlled conditions of steady temperature, and observed that their values fluctuate by
+an average of 0.8 degrees; i.e., the standard deviation of their readings is 0.8, making the variance 
+0.8 * 0.8 = 0.64.  This gives us the $R$ matrix:
+
+\[ R =\begin{bmatrix} 0.64 &amp; 0\\ 0 &amp; 0.64\end{bmatrix} \]
+
+<p>
+
+Now we can also see why $P_k$ and $G_k$ must be matrices: as mentioned in a footnote earlier, $P_k$
+is the <i>covariance of the estimation process</i> at step $k$; so, like the sensor covariance matrix $R$,
+$P_k$ is also a matrix.  And, since $G_k$ is the gain associated with these matrices at each step, $G_k$ must
+be likewise be a matrix, containing a gain value for each covariance value in these matrices. The sizes of
+these matrices $P_k$ and $G_k$ are of course determined by what they represent.  In our present example,
+the size of $P_k$ is $1 \times 1$ (i.e., a single value), because it represents the covariance of the single value 
+estimate value $\hat{x}_k$ with itself.  And the gain $G_k$ is a $1 \times 2$ (one row, two column) matrix,
+because it relates the single state estimate $\hat{x}_k$ two the two sensor observations in $z_k$. 
+
+<p>
+
+With this understanding of sensor fusion, let's set aside our thermometers and return to our airplane example.  Putting it all together, we get the following equations for prediction and update for  our airplane 
+(using covariance noise values between 0 and 200 feet, as before):
+
+<p>
+
+<i><b>Predict</b></i>:
+
+\[\hat{x}_k = A \hat{x}_{k-1} = 1 * \hat{x}_{k-1} = \hat{x}_{k-1}\]
+
+\[P_k = A P_{k-1} A^T = 1 * P_{k-1} * 1 = P_{k-1}\]
+
+<i><b>Update</b></i>:
+
+
+<div align="center">
+$G_k = P_k C^T (C P_k C^T + R)^{-1} =$ 
+<font color="blue">
+$P_k \begin{bmatrix} 1~~1 \end{bmatrix}
+(\begin{bmatrix} 1 \\ 1 \end{bmatrix} P_k \begin{bmatrix} 1~~1 \end{bmatrix} + 
+\begin{bmatrix} 200 &amp; 0\\ 0 &amp; 180 \end{bmatrix})^{-1}$
+</font>
+</div>
+
+<p>
+
+<div align="center">
+$\hat{x}_k \leftarrow \hat{x}_k + G_k(z_k - C \hat{x}_k) =  $
+<font color="blue">
+$\hat{x}_k + G_k(z_k - \begin{bmatrix} 1 \\ 1 \end{bmatrix} \hat{x}_k)$
+</font>
+</div>
+
+<p>
+
+<div align="center">
+$P_k \leftarrow (I - G_k C) P_k =$
+<font color="blue">$(1 - G_k\begin{bmatrix} 1 \\ 1 \end{bmatrix}) P_k$</font>
+</div>
+
+<p>
+
+
+As it turns out, our impoverished state-transition model can get us into trouble if we don't
+reintroduce something we mentioned earlier: <i>process noise</i>.  Recall that our complete equation for 
+the state transition in a single-variable system was
+
+\[ x_k = a x_{k-1} + w_k \]
+
+where $w_k$ is the process noise at a given time.  With our linear algebra knowledge we would now of course write this equation as 
+
+\[ x_k = A x_{k-1} + w_k \]
+
+but the fact remains that we still have not accounted for the process noise in our prediction / update model.
+Doing this turns out to be pretty easy.  Just as we used $R$ to represent the covariance of the measurement
+noise $v_k$, we use $Q$ to represent the covariance of the process noise $w_k$. Then we make a slight modification to our
+$P_k$ prediction, simply adding in this covariance:
+
+<font color="blue"><div align="center">$P_k = A P_{k-1} A^T + Q$</div></font>
+
+<p>
+
+The interesting thing is, even very small values for the nonzero elements of this $Q$ matrix turn out to be very
+helpful in keeping our estimated state values on track.
+
+<p>
+
+So here is at last is a little sensor-fusion demo, allowing you to experiment with the values in 
+$R$ and $Q$, and also to change the amount of <i>bias</i> (constant inaccuracy; or mean value of the noise) 
+in each of the two sensors.  As you can see, when sensors are biased in different directions,
+sensor fusion can provide a closer approximation to the
+&ldquo;true&rdquo; state of the system than you can get with a single sensor alone.
+
+<p>
+
+<canvas id="canvas" width="700" height="300" style="border:1px solid #000000;"></canvas>
+<br><br>
+Plot:
+<input type="checkbox" id="plot_actual" onchange="replot();"><font color="blue">Actual $x_k$</font>
+&nbsp;
+<input type="checkbox" id="plot_sensor1" onchange="replot();"><font color="red">Sensor 1 $z_{1k}$</font>
+&nbsp;
+<input type="checkbox" id="plot_sensor2" onchange="replot();"><font color="magenta">Sensor 2 $z_{2k}$</font>
+&nbsp;
+<input type="checkbox" id="plot_estimated" onchange="replot();"><font color="green">Estimated $\hat{x}_k$</font>
+</b>
+
+
+<table>
+<tr>
+<td><input type="range" min="-1" max="1" value="-1" id="bias1_slider" step=".005" onchange="bias1Update(value)"></td>
+<td><input type="range" min="-1" max="1" value="1" id="bias2_slider" step=".005" onchange="bias2Update(value)"></td>
+<td align="center"><button onclick="init()">Reset</button></td>
+</tr>
+<tr>
+<td align="center"><b>Sensor 1 Bias = <output for="bias1_slider" id="bias1_value">-1</output></b></td>
+<td align="center"><b>Sensor 2 Bias = <output for="bias2_slider" id="bias2_value">1</output></b></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><input type="range" min="0" max="1" value="0.64" id="r1_slider" step=".005" onchange="r1Update(value)"></td>
+<td><input type="range" min="0" max="1" value="0.64" id="r2_slider" step=".005" onchange="r2Update(value)"></td>
+<td><input type="range" min="0" max="1" value="0.05" id="q_slider" step=".0005" onchange="qUpdate(value)"></td>
+</tr>
+<tr>
+<td align="center"><b>R1 = <output for="r1_slider" id="r1_value">0.64</output></b></td>
+<td align="center"><b>R2 = <output for="r2_slider" id="r2_value">0.64</output></b></td>
+<td align="center"><b>Q = <output for="q_slider" id="q_value">.05</output></b></td>
+</tr>
+</table>
+
+
+
+<h3> 
+    <p>Previous: <a href="kalman_13.html" rel="next">Sensor Fusion Intro</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_15.html" rel="next">Nonlinearity Intro</a>
+</h3>
+
+<hr>
+
+<p id="fn15"><a href="#r15">[15]</a> I adapted this material from the  example in Antonio Moran's excellent 
+<a href="https://web.archive.org/web/20180725110135/http://www.slideshare.net/antoniomorancardenas/data-fusion-with-kalman-filtering">slides</a> 
+on Kalman filtering for sensor fusion. Matlab / Octave users may want to try out the 
+<a href="https://web.archive.org/web/20180725110135/https://github.com/simondlevy/SensorFusion">version</a> I've posted on Github, which includes a
+more general implementation of the Kalman filter.
+
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 11:01:35 Jul 25, 2018 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:31:53 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 72.331
+  exclusion.robots: 0.065
+  exclusion.robots.policy: 0.057
+  cdx.remote: 0.051
+  esindex: 0.008
+  LoadShardBlock: 47.392 (3)
+  PetaboxLoader3.datanode: 100.047 (4)
+  load_resource: 133.968
+  PetaboxLoader3.resolve: 62.987
+-->

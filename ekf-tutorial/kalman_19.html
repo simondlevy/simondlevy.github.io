@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_19.html","20190602081857","https://web.archive.org/","web","/_static/",
+	      "1559463537");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script src="/web/20190602081857js_/http://home.wlu.edu/~levys/kalman_tutorial/utils.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="//web.archive.org/web/20190602081857js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+<script type="text/javascript">
+
+function init() {
+
+}
+
+</script>
+
+</head>
+
+<body onload="init();">
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 19: The Jacobian</h3>
+
+To answer our second question &ndash; how to generalize our single-valued nonlinear state/observation model to 
+a multi-valued systems &ndash; it will be helpful to recall the equation for the sensor component of our 
+linear model:
+
+\[ z_k = C x_k \]
+
+For a system with two state values and three sensors, we can rewrite this as:
+
+\[
+z_k = 
+\begin{bmatrix}
+c_{11} &amp; c_{12} \\
+c_{21} &amp; c_{22} \\
+c_{31} &amp; c_{32} \\
+\end{bmatrix}
+\begin{bmatrix}
+x_{k1} \\
+x_{k2} 
+\end{bmatrix} 
+=
+\begin{bmatrix}
+c_{11}x_{k1} + c_{12} x_{k2}\\
+c_{21}x_{k1} + c_{22} x_{k2}\\
+c_{31}x_{k1} + c_{32} x_{k2}
+\end{bmatrix}
+\]
+
+Although you may not have seen notation like this before, it is pretty straightforward: the double numerical 
+index on the elements of the $C$ matrix indicates the row and column position of each element, but more importantly, 
+the relationship being expressed.  For example, $c_{12}$ is the coefficient (multiplier) relating the current
+value $z_{k1}$ of the first sensor to the second component $x_{k2}$ of the current state.
+
+<p>
+
+For a nonlinear model, there will likewise be a matrix whose number of rows equals the number of sensors and
+number of columns equals the number of states; however, this matrix will contain <i>the current value of the first 
+    derivative of the sensor value with respect to that state value</i>. 
+Mathematicians call such a derivative a 
+<a href="https://web.archive.org/web/20190602081857/http://en.wikipedia.org/wiki/Partial_derivative">partial derivative</a>, and the matrix of such derivatives
+they call the
+<a href="https://web.archive.org/web/20190602081857/http://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant">Jacobian</a>. Computing the Jacobian
+is beyond the scope of the present tutorial <sup><a href="#fn17" id="r17">[17]</a></sup>, but this Matlab-based 
+<a href="https://web.archive.org/web/20190602081857/http://www.mathworks.com/matlabcentral/fileexchange/18189-learning-the-extended-kalman-filter">
+EKF tutorial</a> and this Matlab-based 
+<a href="https://web.archive.org/web/20190602081857/http://www.mathworks.com/matlabcentral/fileexchange/31487-extended-kalman-filter-ekf--for-gps">
+implementation with GPS examples</a>
+show that it involves relatively little code.
+
+<p>
+
+If these concepts seems confusing, think about a survey in which a group of people is asked to rate a couple of
+different products on a scale (say, 1 to 5).  The overall score given to each product will be the average of
+all the people's ratings on that product. To see how one person influenced the overall rating for a single product,
+we would look at that person's rating on that product.  Each such person/product rating is like a partial derivative,
+and the table of such person/product ratings is like the Jacobian.  Replace people with sensors and issues with
+states, and you understand the sensor model of the Extended Kalman Filter.
+
+<p>
+
+All that remains at this point is to generalize our nonlinear sensor/state model to the state-transition model.
+In other words, our linear model
+
+\[x_k = A x_{k-1} + w_k  \]
+
+becomes
+
+\[x_k = f(x_{k-1}) + w_k  \]
+
+where $A$ is replaced by the Jacobian of the state-transition function $f$.  In fact, the convention is to use
+$F_k$ for this Jacobian (since it corresponds to the function $f$ and changes over time), and to use $H_k$ for
+the Jacobian of the sensor function $h$. Incorporating the control signal $u_k$ into the state-transition
+function, we got the &ldquo;full Monty&rdquo; for the Extended Kalman Filter that you are likely to 
+encounter in the literature:
+
+<font color="blue">
+<p>
+
+<i><b>Model:</b></i>
+
+<div align="center">
+$x_k = f(x_{k-1}, u_k)  + w_k$
+<br><br>
+$z_k = h(x_{k})  + v_k$
+</div>
+
+<i><b>Predict:</b></i>
+
+<div align="center">
+    $\hat{x}_k = f(\hat{x}_{k-1}, u_k)$
+<br><br>
+$P_k = F_{k-1} P_{k-1} F^T_{k-1} + Q_{k-1}$
+</div>
+
+<i><b>Update:</b></i>
+
+<div align="center">
+$G_k = P_k H_k^T (H_k P_k H_k^T + R)^{-1}$
+<br><br>
+$\hat{x}_k \leftarrow \hat{x}_{k} + G_k(z_k - h(\hat{x}_{k}))$
+<br><br>
+$P_k \leftarrow (I - G_k H_k) P_k$
+</div>
+
+</font>
+
+<h3>
+    <p>Previous: <a href="kalman_18.html" rel="next">Computing the Derivative</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_20.html" rel="next">TinyEKF</a>
+</h3>
+
+<hr>
+
+<p id="fn17"><a href="#r17">[17]</a> In most EKF examples I've seen, the state transition function is
+simply the identity function $f(x) = x$. So its Jacobian is just the identity matrix described in
+<a href="kalman_12.html">Section 12</a>. Likewise for the observation function $h$ and its 
+Jacobian $H$.
+ </body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 08:18:57 Jun 02, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:33:34 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 113.2
+  exclusion.robots: 0.071
+  exclusion.robots.policy: 0.063
+  cdx.remote: 0.052
+  esindex: 0.011
+  LoadShardBlock: 82.655 (3)
+  PetaboxLoader3.datanode: 116.875 (4)
+  load_resource: 138.058
+  PetaboxLoader3.resolve: 70.206
+-->

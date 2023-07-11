@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_06.html","20190608235552","https://web.archive.org/","web","/_static/",
+	      "1560038152");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+<title>The Extended Kalman Filter: An Interactive Tutorial</title>
+
+<script type="text/javascript" src="//web.archive.org/web/20190608235552js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+
+</head>
+
+<h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
+
+<h3>Part 6: Prediction and Update</h3>
+
+We're almost ready to run our Kalman Filter and see some results.  First, though, you may be wondering
+what happened to the constant $a$ in our original state equation:
+
+\[ x_k = a x_{k-1}  \]
+
+which seems to have vanished in our equation for the state estimate:
+
+\[ \hat{x}_k = \hat{x}_{k-1}  + g_k(z_k - \hat{x}_{k-1})\]
+
+
+The answer is, we need <i>both</i> of these equations to estimate the state. Indeed, both equations represent an estimate
+of the state, based on different kinds of information.   Our original equation represents a <i>prediction</i> about what
+the state <i>should</i> be, and our second equation represents an <i>update</i> to this prediction, based on an
+observation. 
+<sup><a href="#fn7" id="r7">[7]</a></sup>
+So we rewrite our original equation with a little hat on the $x$ to indicate an estimate:
+
+
+<font color="red">
+    \[ \hat{x}_k = a \hat{x}_{k-1}  \]
+</font>
+
+
+Finally, we use the constant $a$ in a prediction of the error as well:
+<sup><a href="#fn8" id="r8">[8]</a></sup>
+
+<font color="red">
+    \[ p_k = a p_{k-1} a  \]
+</font>
+
+Together these two formulas in red represent the <i>prediction phase</i> of our Kalman Filter.  The idea is that the cycle 
+predict / update, predict / update, ... is repeated for as many time steps as we like.
+
+
+<h3> 
+    <p>Previous: <a href="kalman_05.html" rel="next">Computing the Gain</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Next: <a href="kalman_07.html" rel="next">Running the Filter</a>
+</h3>
+
+<hr>
+
+<p id="fn7"><a href="#r7">[7]</a>  Technically, the first estimate is called a <i>prior</i>, and the second a
+<i>posterior</i>, and most treatments introduce some additional superscript or subscript to show the 
+distinction.  Because I am trying to keep things simple (and easy to code up in your favorite programming language!),
+I avoid complicating the notation any further.
+
+<p id="fn8"><a href="#r8">[8]</a>  As Zichao Zhang has kindly pointed out to me, we multiply twice by $a$ because
+the prediction error $p_k$ is itself a squared error; hence, it is scaled by the square of the coefficient associated
+with the state value $x_k$.  The reason for representing the error prediction as $a p_{k-1} a$ instead of $a^2p_{k-1}$ will become
+clear in  <a href="kalman_12.html">Part 12</a>.
+
+</body>
+</html>
+
+<!--
+     FILE ARCHIVED ON 23:55:52 Jun 08, 2019 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 06:28:29 Jul 11, 2023.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 128.155
+  exclusion.robots: 0.258
+  exclusion.robots.policy: 0.234
+  cdx.remote: 0.154
+  esindex: 0.02
+  LoadShardBlock: 75.041 (3)
+  PetaboxLoader3.datanode: 86.462 (4)
+  load_resource: 71.723
+  PetaboxLoader3.resolve: 45.609
+-->
