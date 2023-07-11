@@ -3,17 +3,12 @@
 <html>
 <head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
 <script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
-<script type="text/javascript">
-  __wm.init("https://web.archive.org/web");
-  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_04.html","20190609092904","https://web.archive.org/","web","/_static/",
-	      "1560072544");
-</script>
 <link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
 <link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
 <!-- End Wayback Rewrite JS Include -->
 <title>The Extended Kalman Filter: An Interactive Tutorial</title>
 
-<script type="text/javascript" src="//web.archive.org/web/20190609092904js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -62,7 +57,7 @@ x_k &amp; = z_k - v_k
 \]
 
 The problem of course is that we don't know the current noise $v_k$: it is by definition
-unpredictable.  Fortunately, <a href="https://web.archive.org/web/20190609092904/http://en.wikipedia.org/wiki/Rudolf_E._K%C3%A1lm%C3%A1n">Kalman</a> 
+unpredictable.  Fortunately, <a href="https://en.wikipedia.org/wiki/Rudolf_E._K%C3%A1lm%C3%A1n">Kalman</a> 
 had the insight that we can <i>estimate</i> the state by taking into account both the current observation
 and the previous estimated state.  Engineers use a little caret or &ldquo;hat&rdquo; ^ over a variable to 
 show that it is estimated: so $\hat{x}_k$ is the estimate of the current state.  Then we can express the estimate 
