@@ -1,20 +1,13 @@
-
 <!DOCTYPE html>
 <html>
 <head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
 <script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
-<script type="text/javascript">
-  __wm.init("https://web.archive.org/web");
-  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_05.html","20190608231810","https://web.archive.org/","web","/_static/",
-	      "1560035890");
-</script>
 <link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
 <link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
 <!-- End Wayback Rewrite JS Include -->
-
 <title>The Extended Kalman Filter: An Interactive Tutorial</title>
 
-<script type="text/javascript" src="//web.archive.org/web/20190608231810js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -22,9 +15,23 @@ MathJax.Hub.Config({
 });
 </script>
 
+<script type="text/javascript">
+
+function outputUpdate(gain) {
+
+  document.querySelector('#gain').value = gain;
+  var xk1 = 110;
+  var zk = 105;
+  document.querySelector('#estimate').value = xk1 + gain * (zk - xk1);
+}
+
+
+</script>
 
 
 </head>
+<body onload="var gain = 0.5; var slider = document.getElementById('slider'); slider.value = gain; outputUpdate(gain)">
+
 
 <h1>The Extended Kalman Filter: An Interactive Tutorial for Non-Experts</h1>
 
