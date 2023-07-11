@@ -3,17 +3,12 @@
 <html>
 <head><script type="text/javascript" src="/_static/js/bundle-playback.js?v=1WaXNDFE" charset="utf-8"></script>
 <script type="text/javascript" src="/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
-<script type="text/javascript">
-  __wm.init("https://web.archive.org/web");
-  __wm.wombat("http://home.wlu.edu:80/~levys/kalman_tutorial/kalman_08.html","20170125215806","https://web.archive.org/","web","/_static/",
-	      "1485381486");
-</script>
 <link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=S1zqJCYt" />
 <link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
 <!-- End Wayback Rewrite JS Include -->
 <title>The Extended Kalman Filter: An Interactive Tutorial</title>
 
-<script type="text/javascript" src="https://web.archive.org/web/20170125215806js_/http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full"></script>
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -43,7 +38,7 @@ $v_k$ is the current noise (inaccuracy) associated with the observation.
 Although these two equations apply well to many kinds of systems, they are sometimes not the whole story.
 For one thing, we have not accounted for the time-varying <i>control</i> that the pilot exercises over the airplane,
 by (for example) moving the 
-<a href="https://web.archive.org/web/20170125215806/http://en.wikipedia.org/wiki/Yoke_%28aeronautics%29"> control column</a>
+<a href="https://en.wikipedia.org/wiki/Yoke_%28aeronautics%29"> control column</a>
 forward and back.  To account for the control we introduce another subscripted variable $u_k$,
 representing the current value of the <i>control signal</i> that the pilot is sending to the
 airplane. Just as the previous state $x_{k-1}$ was scaled by a constant amount $a$,
