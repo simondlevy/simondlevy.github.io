@@ -39,24 +39,24 @@
 
 <div class="entry-content">
 
-<h1 class="wp-block-heading">CSCI 3907: FPGA Quickstart with Amaranth</h1>
+<h1 class="wp-block-heading">CSCI 3907: Installing Amaranth for FPGAs on Linux</h1>
 
 <hr class="wp-block-separator has-css-opacity" />
 
 <a href="https://amaranth-lang.org/docs/amaranth/latest/intro.html"><img src="amaranth.png" width=200></a>
 
-<br><br>
-
-Make sure you've installed <a href="https://www.python.org/downloads/">Python</a>
-on your computer and can run commands on the command-line (shell, terminal).
-If you haven't done this before or you run into trouble, as me for help. Next, click
-on the link below for your operating system:
-<br><br>
-<ul style="padding-left: 30px;">
-<li><a href="amaranth-osx.html">Mac OS</a>
-<li><a href="amaranth-windows.html">Windows</a>
-<li><a href="amaranth-linux.html">Linux</a>
-</ul>
+<ol style="padding-left: 30px;">
+    <br><li> <tt><b>python3 -m venv csci3097-venv</b></tt>
+        <br><br><li> <tt><b>source csci3097-venv/bin/activate</b></tt>
+        <br><br><li> <tt><b>pip install amaranth</b></tt>
+        <br><br><li> <tt><b>pip install amaranth_boards</b></tt>
+        <br><br><li> <tt><b>sudo apt install yosys</b></tt>
+        <br><br><li> From this <a href="https://github.com/YosysHQ/oss-cad-suite-build/releases/tag/2026-07-22">page</a>,
+            download and extract the <b>oss-cad-suite-linux</b> file for the processor on your machine
+            (<b>x64</b> or <b>arm64</b>).
+        <br><br><li> <tt><b>source oss-cad-suite/environment</b></tt>
+</b></tt>
+</ol>
 
 </body>
 </html>
