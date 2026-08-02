@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+<link rel='stylesheet' id='twentyseventeen-fonts-css' href='https://simondlevy.academic.wlu.edu/wp-content/themes/twentyseventeen/assets/fonts/font-libre-franklin.css?ver=20230328' media='all' />
+<link rel='stylesheet' id='twentyseventeen-style-css' href='https://simondlevy.academic.wlu.edu/wp-content/themes/twentyseventeen/style.css?ver=20260520' media='all' />
+<link rel='stylesheet' id='twentyseventeen-block-style-css' href='https://simondlevy.academic.wlu.edu/wp-content/themes/twentyseventeen/assets/css/blocks.css?ver=20240729' media='all' />
+<link rel='stylesheet' id='bt_2017-css' href='https://simondlevy.academic.wlu.edu/wp-content/plugins/customize-twenty-seventeen/style.css?ver=bc156e135bb1ee160c0edb113b0fda2f' media='all' />
+</head>
+
+<body class="wp-singular page-template-default page page-id-3560 wp-embed-responsive wp-theme-twentyseventeen bt-remove-entry-header page-one-column colors-light">
+
+<div id="page" class="site">
+<a class="skip-link screen-reader-text" href="#content"> Skip to content	</a>
+<header id="masthead" class="site-header">
+<div class="custom-header">
+<div class="custom-header-media">
+<div class="site-branding">
+<div class="wrap">
+<div class="site-branding-text">
+<p class="site-title"><a href="https://simondlevy.academic.wlu.edu/" rel="home" >Simon D. Levy</a></p>
+<p class="site-description">Computer Science Department, Washington and Lee University</p>
+</div><!-- .site-branding-text -->
+</div><!-- .wrap -->
+</div><!-- .site-branding -->
+</div><!-- .custom-header -->
+</header><!-- #masthead -->
+<div class="site-content-contain">
+<div id="content" class="site-content">
+<div class="wrap">
+<div id="primary" class="content-area">
+<main id="main" class="site-main">
+			
+<article id="post-3560" class="post-3560 page type-page status-publish hentry">
+<header class="entry-header">
+
+<h1 class="entry-title">CSCI 3907: Seminar: Performance-Aware Programming</h1>
+</header><!-- .entry-header -->
+
+<div class="entry-content">
+
+    <h1 class="wp-block-heading">CSCI 3907: What about Rust?</h1>
+
+<hr class="wp-block-separator has-css-opacity" />
+
+<a href="https://en.wikipedia.org/wiki/Rust_(programming_language)"><img src="rust.png" width=200></a>
+
+<hr>
+
+From <a href="https://www.amazon.com/dp/B0G1B43M9B">Nanosecond C++: Mastering
+    Low-Latency Patterns for High-Frequency Trading</a>:
+
+
+<br><br>
+
+<ol>
+
+    <li><b>Maturity and Ecosystem:</b> The C++ HFT ecosystem is <i>decades</i> old.  The
+    C++ compilers (GCC, Clang) have been obsessively optimized for performance
+    by the entire industry for over 30 years. The low- level libraries,
+    kernel-bypass tools, and, most importantly, the existing pool of <i>expert
+        developers</i> with deep hardware knowledge are overwhelmingly in the C++ camp.
+
+<br><br>
+
+<li> <b>The "Safety" Philosophy:</b> Rust is designed to be <i>safe</i>. The borrow
+    checker is its greatest feature, enforcing memory safety at compile- time.
+    But this safety-first philosophy, while a blessing 99% of the time, can get
+    in the way of the 1% of "tricks" that HFT demands.  The C++ philosophy, by
+    contrast, has always been: "Trust the programmer." C++ gives you the raw,
+    dangerous, and total control to do <i>whatever</i> you want....
+    While Rust can do most of this inside an <tt><b>unsafe</b></tt> block, the C++
+    language is built on this philosophy of "the developer is king." In HFT,
+    the developer must be king, because we are often writing code that is more
+    closely aligned with the hardware than with high-level software
+    abstractions. 
+</ol>
