@@ -39,7 +39,7 @@
 
 <div class="entry-content">
 
-<h1 class="wp-block-heading">CSCI 3907: iCEBreaker setup on Linux</h1>
+<h1 class="wp-block-heading">CSCI 3907: iCEBreaker setup on Mac OS X</h1>
 
 <hr class="wp-block-separator has-css-opacity" />
 
@@ -47,16 +47,19 @@
 
 <ol>
 
-    <li> Download the <a href="https://release.bambuhls.eu/bambu-2024.10.AppImage">Bambu app image</a> and move it to your desktop
+    <li> Download the <a href="https://release.bambuhls.eu/bambu-2024.10.AppImage">Bambu app image</a>
 
         <br><br><li>Right-click on the downloaded AppImage file and rename the file to simply <b>bambu</b>
 
-        <br><br><li>Right-click on the renamed bambu file again, choose Permissions, and click on the checkbox to
+        <br><br><li>Right-click on the renamed bambu file, choose Permissions, and click on the checkbox to
             allow executing the file as a program
 
-    <br><br><li>Copy/paste/run the following line in a terminal window:
+    <br><br><li>Add the following two lines your <tt><b>~/.zshrc</b></tt> file based on where you downloaded the 
+    Bambu app image and the OSS CAD suite.  For example, if they're on your desktop:
 
-        <br><br><tt>echo -e "\nexport PATH=\$PATH:$HOME/Desktop/oss-cad-suite/bin:$HOME/Desktop" >> ~/.bashrc</b</tt>
+            <br>
+            <br>export PATH=$PATH:$(HOME)/Desktop/oss-cad-suite/bin
+            <br>export PATH=$PATH:$(HOME)/Desktop
 
 </ol>
 
