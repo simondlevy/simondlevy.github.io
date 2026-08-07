@@ -39,47 +39,34 @@
 
 <div class="entry-content">
 
-<h1 class="wp-block-heading">CSCI 3907: Toochain setup</h1>
+<h1 class="wp-block-heading">CSCI 3907: Profiling with the <b>sample</b> command on OS X</h1>
 
 <hr>
 
-Whether you're working on a Mac, Windows, or Linux computer, you're going to want to do your work
-in this course in a terminal window.  Although it's likely possible to use an IDE like VSCode or
-Xcode, <b><span style="color: red;">I'm going to test your code in the terminal window, and if your IDE has added stuff
-that causes your code to break on my computer, you'll get no credit.</span></b>
+Unlike the UNIX <tt><b>gprof</b></tt> command, which you run after execution of your program
+completes, OS X's built-in <tt><b>sample</b></tt> command  attaches to a currently-executing process
+(In this way it is like the more powerful PAPI performance tool we'll be
+working with later in the course).  So, for our profiling exercise, you'll want
+to take your inefficient program (e.g., selection-sort) and increase the array
+size to a value big enough to take at least a minute to run (I used a value of
+one million).  Once your inefficient program is running, open another
+terminal (via &#8984;-n) and run the <tt><b>top</b></tt> command in that new
+terminal.  You'll see a list of currently-executing programs, with your inefficient
+program at the top (hence the name of the command!), and its process ID (PID) number
+in the upper-left.  Make a note of that PID, and issue the following command:
 
 <p><p>
+<tt><b> sample PID 5 > report.txt</b></tt>
+<p>
 
-If you're
-working on a Linux machine, like the ones in our classroom and lab, you're all
-set.  For Mac or Windows follow the instructions below:
-<hr>
-
-<h2>Mac OS X</h2>
-
-In Spotlight (the desktop search widget), find the Terminal application, open it, and (I suggest)
-add it to the dock of apps at the bottom of the desktop.
+where <tt><b>PID</b></tt> is the PID you got from <tt><b>top</b></tt>; for example:
 
 <p><p>
-
-Since OS X is UNIX, you've already got most of what you need, until we get to the FPGA part of the
-course in the final few weeks.  If you're a fan of the git command-line, as I am, you'll want to
-run the following command in your terminal to set that up:
-
+<tt><b> sample 17493 5 > report.txt</b></tt>
 <p>
 
-<tt><b> sudo xcode-select --install</b></tt>
-
-<p>
-
-You should get an alert asking you whether you want to install these tools. Once you agree to the
-install, it should take a minute or two, depending on your internet connection.
-
-<hr>
-
-<h2>Windows</h2>
-
-Google <b>wsl ubuntu</b> and follow the directions you get.
+This will do sampling on your program for five seconds, and put a gprof-style
+report into the file report.txt.
 
 </body>
 </html>
