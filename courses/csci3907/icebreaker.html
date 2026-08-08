@@ -47,7 +47,9 @@
 
 <br><br>
 
-<ol>
+<b>To do individually:</b>
+<br><br>
+<ol style="padding-left: 30px;">
     <li>Log into one of the computers in our classroom, open a terminal window, and copy/paste/run the following line:
         <br><br><tt><b>echo -e "\nexport PATH=\$PATH:/opt/oss-cad-suite/bin:/opt/bambu" >> ~/.bashrc</b></tt>
 
@@ -55,11 +57,37 @@
          your previous command worked as expected:
         <br><br><tt><b>bambu --version</b></tt>
         <br><tt><b>yosys --version</b></tt>
-
-        <br><br><li>Google <b>icebreaker fpga yosys blinky example</b> to find a nice AI solution to making a &ldquo;blinky&rdquo;
-            for your iCEBreaker board (blinky being the hardware equivalent of the beloved HelloWorld program).  Copy/paste
-            the code into the specified files.
 </ol>
+
+<b>To do as a team:</b>
+<br><br>
+<ol style="padding-left: 30px;">
+        <li>Google <b>icebreaker fpga yosys blinky example</b> to find a nice AI solution to making a &ldquo;blinky&rdquo;
+            for your iCEBreaker board (blinky being the hardware equivalent of the beloved HelloWorld program).  Copy/paste
+            the code into the specified files (<tt>.v</tt> file and <tt>.pcf</tt> file)
+
+        <br><br><li> Once you can build and run the code on your iCEBreaker, turn the Build and Flash
+            commands into a little <tt>Makefile</tt>, following the process we've been using in class.
+            Your Makfile should work as follows:
+            <br><br>Typing <tt><b>make</b></tt> should build the <tt>.bin</tt> file
+            <br>Typing <tt><b>make flash</b></tt> should load the <tt>.bin</tt> file onto the board,
+            causing the LED to blink
+            <br>Typing <tt><b>make clean</b></tt> should delete everything but the <tt>.v</tt> file,
+            <tt>.pcf</tt> file, and <tt>Makefile</tt>
+
+        <br><br><li> Once everything is working as specified, call me over so I can try out your
+        code.
+</ol>
+
+<b>Submitting to github:</b>
+
+<br><br>
+<span style="padding-left: 30px;">
+Pick one member of your team to submit the code to the private github repo 
+I created for each of you.  The person you pick should Write a little README.md
+naming the members of your team, zip up the four files (<tt>.v</tt>,
+<tt>.pcf</tt>, <tt>Makefile</tt>, and <tt>README.md</tt>, upload it to their
+github, and send me an email to notify me.</span>
 
 </body>
 </html>
