@@ -48,17 +48,13 @@
 <br><br>
 
 <ol>
+    <li>Log into one of the computers in our classroom, open a terminal window, and copy/paste/run the following line:
+        <br><br><tt><b>echo -e "\nexport PATH=\$PATH:/opt/oss-cad-suite/bin:/opt/bambu" >> ~/.bashrc</b></tt>
 
-<br><br> <li> On <a href="https://github.com/YosysHQ/oss-cad-suite-build/releases">this page</a> find the 
-	<b>oss-cad-suite- .tgz</b> file corresponding to your operating system and processor (note that Darwin is
-	the official name for Mac OS X).  Download, this file, move it to your desktop, and extract it.
-
-	<br><br> <li> Click on one of the following three links to complete the installation for your operating system:<br>
-	<a href="icebreaker-osx.html">Mac OS X</a> 
-	&nbsp; &nbsp;<a href="icebreaker-windows.html">Windows</a>
-	&nbsp; &nbsp;<a href="icebreaker-linux.html">Linux</a> 
-
-<br><br><li>Plug your iCEBreaker FPGA board into your computer with a USB cable.
+     <br><br><li> Close the terminal window, open an other terminal window, and run the following commands to check that
+         your previous command worked as expected:
+        <br><br><tt><b>bambu --version</b></tt>
+        <br><tt><b>yosys --version</b></tt>
 </ol>
 
 </body>
