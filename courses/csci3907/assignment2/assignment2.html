@@ -41,6 +41,13 @@
 
 <h1 class="wp-block-heading">CSCI 3907 Assignment #2</h1>
 
+<b>AI Policy for this assigment: As nearly all of the work in this assignment
+    will be running timing tests and plotting your results, feel free to use
+    whatever online resources you like to help you assemble and plot your
+    results.</b>
+
+<br><br>
+
 For this assignment you will be comparing various ways of speeding up the sorting programs we
 worked on eariler in the course.
 
@@ -51,6 +58,22 @@ is O(<i>n</i><sup>2</sup>), whereas quicksort is O(<i>n</i>log<sub>2</sub><i>n</
 For this exercise we're going to apply my preferred criterion for whether 
 a given discipline is a true science; i.e., <a href="https://en.wikipedia.org/wiki/Assume_a_can_opener">
     how closely does the theory match the data?</a>
+
+<br><br>
+For timing experiments like this, the two tricks are (1) finding a large
+enough value of <i>n</i> that the program takes a nontrivial amount of time to
+run (maybe a second or so), but not so much time that you're not sure that it's
+ever going to finish; and (2) running enough trials at each value of <i>n</i> so that
+you see a pattern emerging, but not so many trials that you're wasting time seeing
+the same result over and over.  For my experiments I found that values of
+<i>n</i> between 10,000 (twenty thousand) and 100,000 (one hundred thousand)
+did the trick, and that five trials of each condition sufficed to reveal
+meaningful patterns.   You don't have to record the values for every trial;
+just make sure that you see a typical value that doesn't vary too much, and
+save it in a spreadsheet or other document.
+<br><br>
+Once you've recorded your ten timing values for selection-sort and quicksort,
+make a nice plot comparing them.  Here's what I got for my experiment:
 
 <h3>Part II: Speedup with compiler options</h3>
 
@@ -71,6 +94,12 @@ an undue performance hit.
 
 To explore this issue in C++, we're going to compare our integer quicksort
 algorithm against the built-in STL sorting function <tt><b>std::sort()</b></tt>.
+
+<h3>What to submit to github</h3>
+
+The only thing I'm going to look at is your PDF writeup (you'll get no credit
+unless you submit a PDF), but I always encourage you to submit whatever code 
+you wrote to complete the assigment.
 
 </body>
 </html>
