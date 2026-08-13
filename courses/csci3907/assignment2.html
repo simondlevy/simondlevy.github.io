@@ -42,10 +42,35 @@
 <h1 class="wp-block-heading">CSCI 3907 Assignment #2</h1>
 
 For this assignment you will be comparing various ways of speeding up the sorting programs we
-worked on eariler in the course.  Obviously, selection-sort is a non-starter, so we will instead
-focus on (1) comparing execution speeds under different compilation flags (none, debugging, and 
-optimized), and (2) DIY quicksort versus the sorting algorithm in the Standard Template Library 
-(STL).
+worked on eariler in the course.
+
+<h3>Part I: Exploring Big-O with the <tt>time</tt> command</h3>
+
+As (I hope!) you remember from your Data Structures course, selection-sort
+is O(<i>n</i><sup>2</sup>), whereas quicksort is O(<i>n</i>log<sub>2</sub><i>n</i>).
+For this exercise we're going to apply my preferred criterion for whether 
+a given discipline is a true science; i.e., <a href="https://en.wikipedia.org/wiki/Assume_a_can_opener">
+    how closely does the theory match the data?</a>
+
+<h3>Part II: Speedup with compiler options</h3>
+
+Obviously, selection-sort is a non-starter, so we'll next switch our focus
+focus to comparing execution speeds under different compilation flags.
+
+<h3>Part III: Cost-free abstraction with the STL</h3>
+
+Traditionally, programmers concerned with maximizing performance were
+encouraged to specialize their code for different datatypes, because a 
+general-purpose (abstract) algorithm for sorting any kind of data was
+typically less efficient than an algorithm that sorted only, e.g. strings
+or integers.  </i>Cost-free abstraction</i> refers to the idea that we can use 
+the same functions (sort, search, et al) for any datatype, without incurring
+an undue performance hit.
+
+<br><br>
+
+To explore this issue in C++, we're going to compare our integer quicksort
+algorithm against the built-in STL sorting function <tt><b>std::sort()</b></tt>.
 
 </body>
 </html>
