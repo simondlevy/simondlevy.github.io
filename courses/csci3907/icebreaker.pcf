@@ -34,9 +34,9 @@ set_io -nowarn led_breakout_g3  23
 set_io -nowarn led_breakout_g4  21  
 
 # Breakout Buttons (Active HIGH)
-set_io -nowarn btn_pins[0]  20  # Button 1 (Left)
-set_io -nowarn btn_pins[1]  19  # Button 2 (Center)
-set_io -nowarn btn_pins[2]  18  # Button 3 (Right)
+set_io -nowarn breakout_btn1 20  # Button 1 (Left)
+set_io -nowarn breakout_btn2 19  # Button 2 (Center)
+set_io -nowarn breakout_btn3 18  # Button 3 (Right)
 
 # -----------------------------------------------------------------------------
 # Standard PMOD Headers (For external expansions)
