@@ -116,6 +116,11 @@ and <tt>-O2</tt> is the letter O, not the number zero).
 <br><br>&nbsp;&nbsp; <tt>-O1</tt> (basic optimization)
 <br><br>&nbsp;&nbsp; <tt>-O2</tt> (recommended standard)
 
+<br><br>
+
+Plot your quicksort results as before, but this time with the four optimization
+levels compared (none, <tt>-g -pg</tt>, <tt>-O1</tt>, <tt>-O2</tt>).
+
 <h3>Part III: Cost-free abstraction with the STL</h3>
 
 Traditionally, programmers concerned with maximizing performance were
@@ -130,6 +135,8 @@ an undue performance hit.
 
 To explore this issue in C++, we're going to compare our integer quicksort
 algorithm against the built-in STL sorting function <tt><b>std::sort()</b></tt>.
+Obviously, we'll be comparing this STL function against our (integer-only)
+quicksort implementation. 
 
 <h3>What to submit to github</h3>
 
