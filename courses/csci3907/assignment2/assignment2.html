@@ -53,34 +53,68 @@ worked on eariler in the course.
 
 <h3>Part I: Exploring Big-O with the <tt>time</tt> command</h3>
 
-As (I hope!) you remember from your Data Structures course, selection-sort
+As (I hope!) you remember from your Data Structures course, selection sort
 is O(<i>n</i><sup>2</sup>), whereas quicksort is O(<i>n</i>log<sub>2</sub><i>n</i>).
-For this exercise we're going to apply my preferred criterion for whether 
-a given discipline is a true science; i.e., <a href="https://en.wikipedia.org/wiki/Assume_a_can_opener">
-    how closely does the theory match the data?</a>
+For this exercise we're going to investigatge these theoretical claims,
+applying my preferred criterion for whether a given discipline is a true
+science; i.e., <a href="https://en.wikipedia.org/wiki/Assume_a_can_opener"> how
+    closely does the theory match the data?</a>
 
 <br><br>
 For timing experiments like this, the two tricks are (1) finding a large
 enough value of <i>n</i> that the program takes a nontrivial amount of time to
-run (maybe a second or so), but not so much time that you're not sure that it's
+run (at least one second or so), but not so much time that you're not sure that it's
 ever going to finish; and (2) running enough trials at each value of <i>n</i> so that
 you see a pattern emerging, but not so many trials that you're wasting time seeing
-the same result over and over.  For my experiments I found that values of
-<i>n</i> between 10,000 (twenty thousand) and 100,000 (one hundred thousand)
-did the trick, and that five trials of each condition sufficed to reveal
-meaningful patterns.   You don't have to record the values for every trial;
-just make sure that you see a typical value that doesn't vary too much, and
-save it in a spreadsheet or other document.
-<br><br>
-Once you've recorded your ten timing values for selection-sort and quicksort,
-make a nice plot comparing them.  Here's what I got for my experiment:
+the same result over and over.  For this sorting-algorithm comparison, I found
+that values of <i>n</i> between 10,000 (twenty thousand) and 100,000 (one
+hundred thousand) did the trick, and that five trials of each condition
+sufficed to reveal meaningful patterns.   You don't have to record the values
+for every trial; just make sure that you see a typical value that doesn't vary
+too much, and save it in a spreadsheet or other document.  <br><br> Once you've
+recorded your ten timing values for selection sort and quicksort, make a nice
+plot comparing them.  Here's what I got for my experiment:
 
 <img src="Figure_1.png">
 
+<br>
+
+As you can see, quicksort is so much faster than selection sort that we can't even
+see a pattern for quicksort for these values of <i>n</i> ; i.e., the cost
+of quickosrt is effectively zero for such small datasets! Before experimenting
+with larger values of <i>n</i> for quicksort, however, let's see how well we can fit
+the selection sort data to its theoretical O(<i>n</i><sup>2</sup>) time complexity.
+As you may recall, saying that the cost of an algorithm is O(<i>n</i><sup>2</sup>)
+means that (above some trivial value of <i>N</i>), the algorithm runs in time
+no more than <i>kN</i><sup>2</sup>, where <i>k</i> is a constant depending on
+our hardware, implementation, etc.  To validate this definition, play around
+with some (really tiny) values of <i>k</i> to see how good a fit you can get
+for the observed behavior of selection sort.  Here's what I got on my computer:
+
+<img src="Figure_2.png">
+
+<br>
+
+Not bad, eh?  To finish up this set of experiments, let's do the same thing
+for quicksort: find a big enough interval of values for <i>N</i> that you can
+get a nice set of time measurements, then try to find a value of <i>k</i> that
+gives you the best fit to the theoretical O(<i>n</i>log<sub>2</sub><i>n</i>).
+I found that values of <i>n</i> between ten million and a hundred million gave
+me a nice spread, which I was again able to fit pretty well to the theory.  
+Make your own plot for this experiment, and include the plot in your writeup.
+
 <h3>Part II: Speedup with compiler options</h3>
 
-Obviously, selection-sort is a non-starter, so we'll next switch our focus
-focus to comparing execution speeds under different compilation flags.
+Moving ahead with quicksort, let's focus to comparing execution speeds under
+different compilation flags.  For this experiment, repeat your quicksort trials
+for the ten large values of <i>N</i>, comparing your original timing 
+results from the previous experiment with the results you get under the
+following compiler settings (note that the <tt>O</tt> in <tt>-O1</tt>
+and <tt>-O2</tt> is the letter O, not the number zero).
+
+<br><br> &nbsp;&nbsp; <tt>-g -pg</tt> (debugging and profiling)
+<br><br>&nbsp;&nbsp; <tt>-O1</tt> (basic optimization)
+<br><br>&nbsp;&nbsp; <tt>-O2</tt> (recommended standard)
 
 <h3>Part III: Cost-free abstraction with the STL</h3>
 
@@ -88,7 +122,7 @@ Traditionally, programmers concerned with maximizing performance were
 encouraged to specialize their code for different datatypes, because a 
 general-purpose (abstract) algorithm for sorting any kind of data was
 typically less efficient than an algorithm that sorted only, e.g. strings
-or integers.  </i>Cost-free abstraction</i> refers to the idea that we can use 
+or integers.  <i>Cost-free abstraction</i> refers to the idea that we can use 
 the same functions (sort, search, et al) for any datatype, without incurring
 an undue performance hit.
 
@@ -100,8 +134,12 @@ algorithm against the built-in STL sorting function <tt><b>std::sort()</b></tt>.
 <h3>What to submit to github</h3>
 
 The only thing I'm going to look at is your PDF writeup (you'll get no credit
-unless you submit a PDF), but I always encourage you to submit whatever code 
-you wrote to complete the assigment.
+unless you submit in PDF format), but I always encourage you to submit whatever
+code and additional documents you created (like spreadsheets) to complete the
+assigment, for your own future use.  Your writeup should contain the figures
+described above, in a nice, professional-looking format.  Your writeup should
+include the following plots, each with a brief (one-sentence) caption
+summarizing your results.
 
 </body>
 </html>
