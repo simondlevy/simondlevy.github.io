@@ -1,0 +1,67 @@
+# -----------------------------------------------------------------------------
+# iCEBreaker FPGA Physical Constraints File (.pcf)
+#
+# We set the -nowarn flag for each pin so we won't get a compiler warning about
+# not using that pin in our Verilog code
+# -----------------------------------------------------------------------------
+
+# System Clock Oscillator (12 MHz)
+set_io -nowarn clk        35
+
+# Onboard Push Buttons
+set_io -nowarn btn_n      10    # User Button (Active LOW, pulled up)
+
+# Onboard LEDs
+set_io -nowarn led_r      11    # User Red LED
+set_io -nowarn led_g      37    # User Green LED
+
+# -----------------------------------------------------------------------------
+# Hardware UART
+# -----------------------------------------------------------------------------
+
+set_io -nowarn rx         6
+set_io -nowarn tx         9
+
+# -----------------------------------------------------------------------------
+# Onboard Breakout PMOD (The 5 LEDs and 3 Buttons at the snap-off edge)
+# -----------------------------------------------------------------------------
+
+# Breakout LEDs (Active HIGH)
+set_io -nowarn led_breakout_r   26  
+set_io -nowarn led_breakout_g1  27  
+set_io -nowarn led_breakout_g2  25  
+set_io -nowarn led_breakout_g3  23  
+set_io -nowarn led_breakout_g4  21  
+
+# Breakout Buttons (Active HIGH)
+set_io -nowarn btn_pins[0]  20  # Button 1 (Left)
+set_io -nowarn btn_pins[1]  19  # Button 2 (Center)
+set_io -nowarn btn_pins[2]  18  # Button 3 (Right)
+
+# -----------------------------------------------------------------------------
+# Standard PMOD Headers (For external expansions)
+# -----------------------------------------------------------------------------
+
+# PMOD 1A (Top Row)
+set_io -nowarn pmod1a[0]    4
+set_io -nowarn pmod1a[1]    2
+set_io -nowarn pmod1a[2]    47
+set_io -nowarn pmod1a[3]    45
+
+# PMOD 1A (Bottom Row)
+set_io -nowarn pmod1a[4]    3
+set_io -nowarn pmod1a[5]    48
+set_io -nowarn pmod1a[6]    46
+set_io -nowarn pmod1a[7]    44
+
+# PMOD 1B (Top Row)
+set_io -nowarn pmod1b[0]    43
+set_io -nowarn pmod1b[1]    38
+set_io -nowarn pmod1b[2]    34
+set_io -nowarn pmod1b[3]    31
+
+# PMOD 1B (Bottom Row)
+set_io -nowarn pmod1b[4]    42
+set_io -nowarn pmod1b[5]    36
+set_io -nowarn pmod1b[6]    32
+set_io -nowarn pmod1b[7]    28
