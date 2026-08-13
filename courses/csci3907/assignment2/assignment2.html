@@ -41,7 +41,7 @@
 
 <h1 class="wp-block-heading">CSCI 3907 Assignment #2</h1>
 
-<b>AI Policy for this assigment: As nearly all of the work in this assignment
+<b>AI Policy for this assignment: As nearly all of the work in this assignment
     will be running timing tests and plotting your results, feel free to use
     whatever online resources you like to help you assemble and plot your
     results.</b>
@@ -49,13 +49,13 @@
 <br><br>
 
 For this assignment you will be comparing various ways of speeding up the sorting programs we
-worked on eariler in the course.
+worked on earlier in the course.
 
-<h3>Part I: Exploring Big-O with the <tt>time</tt> command</h3>
+<h3>Part I: Exploring Big-O with the <tt><b>time</b></tt> command</h3>
 
 As (I hope!) you remember from your Data Structures course, selection sort
 is O(<i>n</i><sup>2</sup>), whereas quicksort is O(<i>n</i>log<sub>2</sub><i>n</i>).
-For this exercise we're going to investigatge these theoretical claims,
+For this exercise we're going to investigate these theoretical claims,
 applying my preferred criterion for whether a given discipline is a true
 science; i.e., <a href="https://en.wikipedia.org/wiki/Assume_a_can_opener"> how
     closely does the theory match the data?</a>
@@ -81,7 +81,7 @@ plot comparing them.  Here's what I got for my experiment:
 
 As you can see, quicksort is so much faster than selection sort that we can't even
 see a pattern for quicksort for these values of <i>n</i> ; i.e., the cost
-of quickosrt is effectively zero for such small datasets! Before experimenting
+of quicksort is effectively zero for such small datasets! Before experimenting
 with larger values of <i>n</i> for quicksort, however, let's see how well we can fit
 the selection sort data to its theoretical O(<i>n</i><sup>2</sup>) time complexity.
 As you may recall, saying that the cost of an algorithm is O(<i>n</i><sup>2</sup>)
@@ -136,14 +136,17 @@ an undue performance hit.
 To explore this issue in C++, we're going to compare our integer quicksort
 algorithm against the built-in STL sorting function <tt><b>std::sort()</b></tt>.
 Obviously, we'll be comparing this STL function against our (integer-only)
-quicksort implementation. 
+quicksort implementation, using the recommended <tt>-O2</tt> optimization
+level for both implementations.  So this time we'll have a two-way plot, showing
+the ten timing averages for our DIY integer quicksort versus the timing we
+get using STL sort.
 
 <h3>What to submit to github</h3>
 
 The only thing I'm going to look at is your PDF writeup (you'll get no credit
 unless you submit in PDF format), but I always encourage you to submit whatever
 code and additional documents you created (like spreadsheets) to complete the
-assigment, for your own future use.  Your writeup should contain the figures
+assignment, for your own future use.  Your writeup should contain the figures
 described above, in a nice, professional-looking format.  Your writeup should
 include the following plots, each with a brief (one-sentence) caption
 summarizing your results.
