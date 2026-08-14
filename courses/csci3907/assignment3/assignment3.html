@@ -93,5 +93,29 @@ inlining.  Below the plot, comment briefly on your results.
 
 <h3>Part III: Array-of-structs vs. struct-of-arrays</h3>
 
+Think about a (somewhat silly) kindergarten activity where each student is assigned three
+wooden building blocks, which the teacher keeps in a storage room.  Each
+student is issued an ID number that the teacher will use to access that
+student's blocks.  At any given time, a student can request a block to be retrieved
+by the teacher. The student can then play with the block, and perhaps even
+modify it by painting it a different color, after which the teacher returns it
+to the storage room.
+
+<br><br>
+
+Imagining what's in the storage room, the students probably think that they
+each have a box or cubby containing their three blocks, but in reality the teacher has
+organized the blocks in a way that turns out to be more efficient for storage and
+retrieval:  there is one shelf for the  big blocks, one shelf for the medium-sized blocks, and
+one shelf for the small blocks, and each row contains the students' ID numbers in
+ascending order, spaced appropriately.
+
+<br><br>
+
+This made-up example is similar to what we mean by array-of-structs (the more
+intuitive, cubbyhole approach, that we learn in our Data Structures course and
+use in our work) versus struct of arrays (rack-of-shelves).  In both cases,
+the less intuitive approach turns out to be more efficient.
+
 </body>
 </html>
