@@ -82,10 +82,16 @@ Below this data, answer the following questions:
 
 <h3>Part II: Inlining</h3>
 
-<h3>What to submit to github</h3>
+Now that you've collected your profiling data for quicksort, change the compiler
+options back to the recommended <tt><b>-O2</b></tt> we used at the end of the previous
+assignment.  Based on the results from Part I, insert the keyword <tt><b>inline</b></tt>
+in front of the declarations of the most expensive calls (just google it if you're unsure 
+the what I mean).  Re-run your timing trials (ten successive values of <i>N</i>) with
+this trick in your code, and make a plot comparing your old timing values for
+quicksort with <tt><b>-O2</b></tt> against quicksort with <tt><b>-O2</b></tt> plus
+inlining.  Below the plot, comment briefly on your results.
 
-Under each plot provide a brief (one-sentence) caption describing your results: do they match your
-expectations?
+<h3>Part III: Array-of-structs vs. struct-of-arrays</h3>
 
 </body>
 </html>
