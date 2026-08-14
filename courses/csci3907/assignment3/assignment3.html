@@ -118,5 +118,40 @@ intuitive, cubbyhole approach, that we learn in our Data Structures course and
 use in our work) versus struct of arrays (rack-of-shelves).  In both cases,
 the less intuitive approach turns out to be more efficient.
 
+<br><br>
+
+
+Implementing this performance trick in code turns out to be rather simple. We
+can represent the big blocks as type <tt>int</tt> (32 bits), the medium-size as
+type <tt>short</tt> (16 bits), and the little ones as type <tt>char</tt>, write
+a program for each approach, and time our two programs on different sizes of <i>N</i>:
+
+<br><br>
+
+<ul style="padding-left: 30px;">
+
+    <li><tt><b>array_of_structs.cpp</b></tt> should define two little classes: (1) <tt>Cubby</tt> with
+            a single instance of each datatype, and the appropriate constructors, and (2)
+            <tt>StoreRoom</tt>, containing an array of <i>N</i> cubbies.
+            Making everything <tt>public</tt> will simplify your test code.
+
+    <br><br><li><tt><b>struct_of_arrays.cpp</b></tt> should define  just a
+        <tt>StoreRoom</tt> class, containing an array of <i>N</i> values for each
+        of the three numerical types.  Again, making everything <tt>public</tt>
+        will simplify your test code.
+</ul>
+
+The code that accesses your data can likewise be very simple: inspired by an example
+in Chapter 2 of the <i>Nanosecond C++</i> book, I simply wrote a loop of
+<i>N</i> iterations that added a value (I used the constant 1) to every
+<tt>medium</tt> value in my data.  Because both programs ran so quickly, I
+started with <i>N</i>=500,000,000 and went to <i>N</i>=1,000,000,000, in
+increments of 100,000,000; i.e., five large values of <i>N</i> (ten values
+being overkill because we're not trying to explore the Big-O concept).  As
+before, run your experiments, record your average times for each condition, and
+in your writeup include a plot showing your results comparing the times you got
+for the two approaches.
+
+
 </body>
 </html>
