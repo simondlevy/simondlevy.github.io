@@ -39,21 +39,48 @@
 
 <div class="entry-content">
 
-<h1 class="wp-block-heading">CSCI 3907 Assignment #3</h1>
+<h1 class="wp-block-heading">CSCI 3907 Assignment #3: Mechanical sympathy</h1>
 
 <b>AI Policy for this assignment: Again, as nearly all of the work in this
     assignment will be running timing tests and plotting your results, feel
     free to use whatever online resources you like to help you complete your
     code and assemble and plot your results.</b>
 
+<h3>Part I: Profiling revisited</h3>
+
+To get started, recall how we used <tt><b>gprof</b></tt> (Linux) or
+<tt><b>sample</b></tt> (OS X) to get profiling results for our code.  
+Using that approach, do a profile of your quicksort program 
+from the previous assignment in class, with <i>N</i> set to the
+maxiumum value you used (again, for me, it was 100,000,000).
+output from these profiling tools is pretty extensive, but as we did in class,
+you'll want to focus on the percentage breakdown by function call.  For this
+part of your writeup, include the percentage breakdown
+For example, here's what I got (which I've cleaned up for presentation,
+as you should):
+
+<pre>
+  %   cumulative   self                   self     total           
+ time   seconds   seconds    calls        s/call   s/call  name    
+ 79.31     10.26    10.26    66669059     0.00     0.00    partition(int*, int, int)
+ 16.82     12.43     2.17    1767846632   0.00     0.00    swap(int*, int*)
+  2.24     12.72     0.29                                  main
+</pre>
+
+Below this data, answer the following questions:
+
 <br><br>
 
-For this assignment we will try to improve the performance of our quicksort
-code from the Assignment #2, using the &ldquo;mechanical sympathy&rdquo;
-tricks we discussed
-in class.
+<ol style="padding-left: 30px;">
 
-<h3>Part I: Inlining</h3>
+    <li> What general principle (of statistics / data science) dictates that
+        we use the maximum reasonable value of <i>N</i> for this experiment?
+    <br><br><li> Do your profiling results agree with the <i>Pareto Principle</i>?
+   (Google it if you don't know what it is.)
+
+</ol>
+
+<h3>Part II: Inlining</h3>
 
 <h3>What to submit to github</h3>
 
