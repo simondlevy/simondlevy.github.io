@@ -52,12 +52,11 @@ To get started, recall how we used <tt><b>gprof</b></tt> (Linux) or
 <tt><b>sample</b></tt> (OS X) to get profiling results for our code.  
 Using that approach, do a profile of your quicksort program 
 from the previous assignment in class, with <i>N</i> set to the
-maxiumum value you used (again, for me, it was 100,000,000).
+maximum value you used (again, for me, it was 100,000,000).
 The output from these profiling tools is pretty extensive, but as we did in class,
-you'll want to focus on the percentage breakdown by function call.  For this
-part of your writeup, include the percentage breakdown
-For example, here's what I got (which I've cleaned up for presentation,
-as you should):
+you'll want to focus on the percentage breakdown by function call at the top.
+For this part of your writeup, include the percentage breakdown For example,
+here's what I got (which I've cleaned up for presentation, as you should):
 
 <pre>
   %   cumulative   self                   self     total           
@@ -115,11 +114,10 @@ spaced according to the size of the block on that row.
 
 This made-up example is similar to what we mean by array-of-structs (the more
 intuitive, cubbyhole approach, that we learn in our Data Structures course and
-use in our work) versus struct of arrays (rack-of-shelves).  In both cases,
-the less intuitive approach turns out to be more efficient.
+typically use in our work) versus struct of arrays (rack-of-shelves).  In both
+cases, the less intuitive approach turns out to be more efficient.
 
 <br><br>
-
 
 Implementing this performance trick in code turns out to be rather simple. We
 can represent the big blocks as type <tt>int</tt> (32 bits), the medium-size as
@@ -153,6 +151,54 @@ before, run your experiments, record your average times for each condition, and
 in your writeup include a plot showing your results comparing the times you got
 for the two approaches.
 
+<h3>Part IV: <tt><b>constexpr</b></tt></h3>
+
+The <i>Nanosecond C++</i> book, as well as online discussion, devotes quite
+a bit of praise to the C++ <tt><b>constexpr</b></tt> keyword as a further
+performance-enhancing trick.  After experimenting some examples from the book and
+from reddit, stackoverflow, etc., I couldn't get any significant speedup
+by including this keyword before my function declarations (as opposed to
+<tt><b>inline</b></tt>, which as we've seen can speed things up noticeably).
+Then it occurred to me that by always using the recommended <tt><b>-O2</b></tt>
+optimization level, I might be making the compiler do the equivalent of
+<tt><b>constexpr</b></tt> <a href="https://www.dictionary.com/browse/automagically">
+    automagically</a>.  At that point I nearly gave up on <tt><b>constexpr</b></tt>,
+because why bother to do something by hand that the compiler does for free?
+
+<br><br>
+
+Then it occurred to me: by always using <tt><b>-O2</b></tt>, I wasn't dealing
+with the fact that a real-world software project is going to involve a lot
+of debugging and profiling (i.e., <tt><b>-g -pg</b></tt>) before we can
+switch to optimization with <tt><b>-O2</b></tt>.  By using <tt><b>-g -pg</b></tt>
+instead of <tt><b>-O2</b></tt>, and googling <b>simple c++ constexpr example</b> or
+the like, I was able to get a tiny program where the use of <tt><b>constexpr</b></tt>
+made a huge difference in my timing results.
+
+<br><br>
+
+So, to finish up, run this experiment yourself:  Find a little
+<tt><b>constexpr</b></tt> example online, compile it with <tt><b>-g
+-pg</b></tt>, and compare the timing results when you use
+<tt><b>constexpr</b></tt> versus when you omit it.  As before, pick a sequence
+of five large values of <i>N</i> that shows a nice difference without taking
+forever; then make a plot comparing the two conditions (with and without
+<tt><b>constexpr</b></tt>), and include the plot in your writeup.
+
+<h3>What to submit to github</h3>
+
+Same as last time: deliverable is a PDF writeup, but please also submit
+your code, spreadsheets, whatever, for your own future use. Your writeup
+should include: 
+
+<br><br>
+
+<ul style="padding-left: 30px;">
+<li> Part I: Answers to the two questions
+<li>Part II: Plot comparing with/without <tt><b>inline</b></tt>
+<li>Part III: Plot comparing array-of-structs vs. struct-of-arrays
+<li>Part IV: Plot comparing with/without <tt><b>constexpr</b></tt>
+</ul>
 
 </body>
 </html>
