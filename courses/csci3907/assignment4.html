@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+<link rel='stylesheet' id='twentyseventeen-fonts-css' href='https://simondlevy.academic.wlu.edu/wp-content/themes/twentyseventeen/assets/fonts/font-libre-franklin.css?ver=20230328' media='all' />
+<link rel='stylesheet' id='twentyseventeen-style-css' href='https://simondlevy.academic.wlu.edu/wp-content/themes/twentyseventeen/style.css?ver=20260520' media='all' />
+<link rel='stylesheet' id='twentyseventeen-block-style-css' href='https://simondlevy.academic.wlu.edu/wp-content/themes/twentyseventeen/assets/css/blocks.css?ver=20240729' media='all' />
+<link rel='stylesheet' id='bt_2017-css' href='https://simondlevy.academic.wlu.edu/wp-content/plugins/customize-twenty-seventeen/style.css?ver=bc156e135bb1ee160c0edb113b0fda2f' media='all' />
+</head>
+
+<body class="wp-singular page-template-default page page-id-3560 wp-embed-responsive wp-theme-twentyseventeen bt-remove-entry-header page-one-column colors-light">
+
+<div id="page" class="site">
+<a class="skip-link screen-reader-text" href="#content"> Skip to content	</a>
+<header id="masthead" class="site-header">
+<div class="custom-header">
+<div class="custom-header-media">
+<div class="site-branding">
+<div class="wrap">
+<div class="site-branding-text">
+<p class="site-title"><a href="https://simondlevy.academic.wlu.edu/" rel="home" >Simon D. Levy</a></p>
+<p class="site-description">Computer Science Department, Washington and Lee University</p>
+</div><!-- .site-branding-text -->
+</div><!-- .wrap -->
+</div><!-- .site-branding -->
+</div><!-- .custom-header -->
+</header><!-- #masthead -->
+<div class="site-content-contain">
+<div id="content" class="site-content">
+<div class="wrap">
+<div id="primary" class="content-area">
+<main id="main" class="site-main">
+			
+<article id="post-3560" class="post-3560 page type-page status-publish hentry">
+<header class="entry-header">
+
+<h1 class="entry-title">CSCI 3907: Seminar: Performance-Aware Programming</h1>
+</header><!-- .entry-header -->
+
+<div class="entry-content">
+
+<h1 class="wp-block-heading">CSCI 3907 Assignment #3: Mechanical Sympathy</h1>
+
+<b>AI Policy for this assignment: Again, as nearly all of the work in this
+    assignment will be running timing tests and plotting your results, feel
+    free to use whatever online resources you like to help you complete your
+    code and assemble and plot your results.</b>
+
+<h3>Part I: Profiling revisited</h3>
+
+To get started, recall how we used <tt><b>gprof</b></tt> (Linux) or
+<tt><b>sample</b></tt> (OS X) to get profiling results for our code.  
+Using that approach, do a profile of your quicksort program 
+from the previous assignment in class, with <i>N</i> set to the
+maximum value you used (again, for me, it was 100,000,000).
+The output from these profiling tools is pretty extensive, but as we did in class,
+you'll want to focus on the percentage breakdown by function call at the top.
+For this part of your writeup, include the percentage breakdown For example,
+here's what I got (which I've cleaned up for presentation, as you should):
+
+<pre>
+  %   cumulative   self                   self     total           
+ time   seconds   seconds    calls        s/call   s/call  name    
+ 79.31     10.26    10.26    66669059     0.00     0.00    partition(int*, int, int)
+ 16.82     12.43     2.17    1767846632   0.00     0.00    swap(int*, int*)
+  2.24     12.72     0.29                                  main
+</pre>
+
+Below this data, answer the following questions:
+
+<br><br>
+
+<ol style="padding-left: 30px;">
+
+    <li> What general principle (of statistics / data science) dictates that
+        we use the maximum reasonable value of <i>N</i> for this experiment?
+    <br><br><li> Do your profiling results agree with the <i>Pareto Principle</i>?
+   (Google it if you don't know what it is.)
+
+</ol>
+
+<h3>Part II: Inlining</h3>
+
+Now that you've collected your profiling data for quicksort, change the compiler
+options back to the recommended <tt><b>-O2</b></tt> we used at the end of the previous
+assignment.  Based on the results from Part I, insert the keyword <tt><b>inline</b></tt>
+in front of the declarations of the most expensive calls (just google it if you're unsure 
+the what I mean).  Re-run your timing trials (ten successive values of <i>N</i>) with
+this trick in your code, and make a plot comparing your old timing values for
+quicksort with <tt><b>-O2</b></tt> against quicksort with <tt><b>-O2</b></tt> plus
+inlining.  Below the plot, comment briefly on your results.
+
+<h3>Part III: Array-of-structs vs. struct-of-arrays</h3>
+
+Think about a (somewhat silly) kindergarten activity where each student is assigned three
+wooden building blocks, which the teacher keeps in a storage room.  Each
+student is issued an ID number that the teacher will use to access that
+student's blocks.  At any given time, a student can request a block to be retrieved
+by the teacher. The student can then play with the block, and perhaps modify it
+by writing on it or painting it a different color, after which the teacher
+returns it to the storage room.
+
+<br><br>
+
+Imagining what's in the storage room, the students probably think that they
+each have a box or cubby containing their three blocks, but in reality the teacher has
+organized the blocks in a way that turns out to be more efficient for storage and
+retrieval:  there is a rack of three shelves, with one shelf for the  big
+blocks, one shelf for the medium-sized blocks, and one shelf for the small
+blocks, each shelf labeled with the students' ID numbers in ascending order,
+spaced according to the size of the block on that row.
+
+<br><br>
+
+This made-up example is similar to what we mean by array-of-structs (the more
+intuitive, cubbyhole approach, that we learn in our Data Structures course and
+typically use in our work) versus struct of arrays (rack-of-shelves).  In both
+cases, the less intuitive approach turns out to be more efficient.
+
+<br><br>
+
+Implementing this performance trick in code turns out to be rather simple. We
+can represent the big blocks as type <tt>int</tt> (32 bits), the medium-size as
+type <tt>short</tt> (16 bits), and the little ones as type <tt>char</tt>. So your
+job is to write a program for each approach, and time your two programs on
+different sizes of <i>N</i>:
+
+<br><br>
+
+<ul style="padding-left: 30px;">
+
+    <li><tt><b>array_of_structs.cpp</b></tt> should define two little classes: (1) <tt>Cubby</tt> with
+            a single instance of each datatype, and the appropriate constructors, and (2)
+            <tt>StoreRoom</tt>, containing an array of <i>N</i> cubbies.
+            Making everything <tt>public</tt> will simplify your test code.
+
+    <br><br><li><tt><b>struct_of_arrays.cpp</b></tt> should define  just a
+        <tt>StoreRoom</tt> class, containing an array of <i>N</i> values for each
+        of the three numerical types.  Again, making everything <tt>public</tt>
+        will simplify your test code.
+</ul>
+
+The code that accesses your data can likewise be very simple: inspired by an example
+in Chapter 2 of the <i>Nanosecond C++</i> book, I simply wrote a loop of
+<i>N</i> iterations that added a value (I used the constant 1) to every
+<tt>medium</tt> value in my data.  Because both programs ran so quickly, I
+started with <i>N</i>=500,000,000 and went to <i>N</i>=1,000,000,000, in
+increments of 100,000,000; i.e., five large values of <i>N</i> (ten values
+being overkill because we're not trying to explore the Big-O concept).  As
+before, run your experiments, record your average times for each condition, and
+in your writeup include a plot showing your results comparing the times you got
+for the two approaches.
+
+<h3>Part IV: <tt><b>constexpr</b></tt></h3>
+
+The <i>Nanosecond C++</i> book, as well as online discussion, devotes quite
+a bit of praise to the C++ <tt><b>constexpr</b></tt> keyword as a further
+performance-enhancing trick.  After experimenting some examples from the book and
+from reddit, stackoverflow, etc., I couldn't get any significant speedup
+by including this keyword before my function declarations (as opposed to
+<tt><b>inline</b></tt>, which as we've seen can speed things up noticeably).
+Then it occurred to me that by always using the recommended <tt><b>-O2</b></tt>
+optimization level, I might be making the compiler do the equivalent of
+<tt><b>constexpr</b></tt> <a href="https://www.dictionary.com/browse/automagically">
+    automagically</a>.  At that point I nearly gave up on <tt><b>constexpr</b></tt>,
+because why bother to do something by hand that the compiler does for free?
+
+<br><br>
+
+Then it occurred to me: by always using <tt><b>-O2</b></tt>, I wasn't dealing
+with the fact that a real-world software project is going to involve a lot
+of debugging and profiling (i.e., <tt><b>-g -pg</b></tt>) before we can
+switch to optimization with <tt><b>-O2</b></tt>.  By using <tt><b>-g -pg</b></tt>
+instead of <tt><b>-O2</b></tt>, and googling <b>simple c++ constexpr example</b> or
+the like, I was able to get a tiny program where the use of <tt><b>constexpr</b></tt>
+made a huge difference in my timing results.
+
+<br><br>
+
+So, to finish up, run this experiment yourself:  Find a little
+<tt><b>constexpr</b></tt> example online, compile it with <tt><b>-g
+-pg</b></tt>, and compare the timing results when you use
+<tt><b>constexpr</b></tt> versus when you omit it.  As before, pick a sequence
+of five large values of <i>N</i> that shows a nice difference without taking
+forever; then make a plot comparing the two conditions (with and without
+<tt><b>constexpr</b></tt>), and include the plot in your writeup.
+
+<h3>What to submit to github</h3>
+
+Same as last time: deliverable is a PDF writeup, but please also submit
+your code, spreadsheets, whatever, for your own future use. Your writeup
+should include: 
+
+<br><br>
+
+<ul style="padding-left: 30px;">
+<li> Part I: Answers to the two questions
+<li>Part II: Plot comparing with/without <tt><b>inline</b></tt>
+<li>Part III: Plot comparing array-of-structs vs. struct-of-arrays
+<li>Part IV: Plot comparing with/without <tt><b>constexpr</b></tt>
+</ul>
+
+</body>
+</html>
