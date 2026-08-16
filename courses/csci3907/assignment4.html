@@ -43,27 +43,44 @@
 
 <b>AI Policy for this assignment: As you run into errors, I encourage you to copy/paste/google
     the error messages for AI-based suggestions.  I found this approach more helpful than looking
-    at official documentation for PAPI</b>
+    at official documentation for PAPI.</b>
 
 <br><br>
 
-<h3>Part I: Beyond Hello-World</h3>
+<h3>Part I: Counting FLOPS</h3>
 
-Combine hello-world example with 
-<a href="https://drive.google.com/file/d/1_yjJ5WLMyax7DKFdG8JtxE4XX31ZIaBh/view">Jagode/Danalis lecture</a> slide #14:
+In slide #14 in the <a href="https://drive.google.com/file/d/1_yjJ5WLMyax7DKFdG8JtxE4XX31ZIaBh/view">Jagode/Danalis lecture</a> 
+we covered, there's a nice example of using PAPI to count not just the total compute cycles 
+we got with our in-class PAPI intro, but also the number of FLOPS (Floating-Point Operations Per Second),
+a crucial benchmark for intensive numerical computations like modern AI / Deep-Learning.  In this exercise
+we will combine both programs to get the FLOPS count.  Crucially, we will need to check the result
+of each PAPI call, as we did in hello-world, to ensure that we don't silently
+continue to the next step if something doesn't work.  To  do this, I first
+wrote a little <tt>check()</tt> function that ensures that the result of the
+PAPI operation equals <tt>PAPI_OK</tt>.  If it isn't, I report the error and
+exit the program immediately by calling <tt>exit(1);</tt> (which requires
+<tt>#include <stdlib.h></tt> at the top).  
 
-<br><br>
+<br><br> Once that was working, I found that there was a problem with <tt>PAPI_FP_OPS</tt>.
+A little googling revealed that that feature isn't necessarily supported on every
+machine/OS, and that I should run the <tt><b>papi_avail</b></tt> command to see what
+features were avaialble to me.  Copy/pasting the following command into your terminal
+window should help with this:
 
-<ul style="padding-left: 30px;">
-    <li> replace the <tt>#define</tt> as we discussed in class
-    <li> add a check() function for DRY
-    <li> report flops at end.
-</ul>
+<pre>
+papi_avail | grep "Yes   Yes"
+</pre>
 
-<b>Hint:</b> I spent a lot of time trying to write the <tt>do_work</tt> function to
+
+Finally, I spent a lot of time trying to write the <tt>do_work()</tt> function to
 do a lot of floating-point comptutations, but kept getting zero in the final report.
-It turned out (for me, at least) that putting the floating-point calculations
-directly into the <tt>main()</tt> (as suggested in an AI-produced example) did the trick.
+This turned out (for me, at least) two require two crucial things:
+<br><br>
+<ol style="padding-left: 30px;">
+    <li> Running the floating-point calculations on arrays
+    <li> Putting the point calculations directly into the <tt>main()</tt>,
+        not into a separate <tt>do_work()</tt> function.
+</ol>
 
 <h3>Part II: Creating a helper utility</h3>
 
