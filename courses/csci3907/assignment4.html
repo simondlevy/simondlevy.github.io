@@ -57,7 +57,7 @@ numerical computations like modern AI / Deep-Learning.  In this exercise we
 will combine both programs to get the FLOPS count.  Crucially, we will need to
 check the result of each PAPI call, as we did in hello-world, to ensure that we
 don't silently continue to the next step if something doesn't work.  To  do
-this, I first wrote a little <tt>check()</tt> function that ensures that the
+this, I first wrote a little <tt>Check()</tt> function that ensures that the
 result of the PAPI operation equals <tt>PAPI_OK</tt>.  If it isn't, I report
 the error and exit the program immediately by calling <tt>exit(1);</tt> (which
 requires <tt>#include <stdlib.h></tt> at the top).  
@@ -107,7 +107,7 @@ Principle, let's write a little utility class that we can reuse to get
 the counts for a particular event type.  Specifically, in a file
 <tt><b>papi_util.hpp</b> </tt>create a <tt><b>PapiUtil</b></tt> class
 with two public methods, <tt><b>void StartCountingFlops()</b></tt>
-<tt><b>long long GetCount()</b></tt>, and a private method <tt><b>Check</b></tt>
+<tt><b>long long GetCount()</b></tt>, and a private method <tt><b>Check()</b></tt>
 to do the result-checking at each step.  Once you've done that, the code in
 the <tt>main()</tt> of your FLOPS-counting program <tt><b>part2.cpp</b></tt>
 will be very simple:
@@ -122,9 +122,30 @@ will be very simple:
 </pre>
 <h3>Part III: Counting cache misses</h3>
 
+As we discussed in class, the reason that the struct-of-arrays approach runs
+so much faster than array-of-structs approach is that putting data of a
+common size (<tt>int</tt>, <tt>short</tt>, <tt>char</tt>) in a contiguous
+block of memory increases the likelihood that the data we want will already
+be in the cache (ideally, the Level-1 cache L1) when we try to access it.  In
+other words, we'd like to minimize the number of <i>cache misses</i> caused by
+our code.
+
+<br><br>
+
+So, for this exercise, you're going to augument your <tt>PapiUtil</tt>
+class by adding a method <tt><b>StartCountingL1Misses()</b></tt>.  As usual,
+copy-paste-modify (from <tt>StartCountingFlops()</tt>, followed by a little
+code-factoring, should make it easy to to implement this new method.  Next,
+write a program <tt><b>part3.cpp</b></tt> containing your copy-pasted code from
+Assignment #3's <tt>array_of_structs.cpp</tt> and <tt>struct_of_arrays.cpp</tt>,
+this time using your <tt>PapiUtil</tt> class to count L1 cache misses.
+
 <h3>Part IV: Counting branch instructions</h3>
 
 <h3>What to submit to github</h3>
+
+Because of the amount of coding you neeeded to do for this assignment, there's no
+need to do a writeup.  Instead, submit the following files:
 
 <br><br>
 
@@ -147,7 +168,13 @@ and see something like the following results:
 FLOPS=2000000 cycles=8650426
 ./part2
 FLOPS=2000000
+./part3
+SOA caches misses=49397
+AOS caches misses=220421
 </pre>
+
+I may also look at your code to check for DRY violations and the like, so
+if you have time, you'll want to make it all neat and tidy!
 
 </body>
 </html>
