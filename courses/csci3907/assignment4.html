@@ -140,7 +140,13 @@ write a program <tt><b>part3.cpp</b></tt> containing your copy-pasted code from
 Assignment #3's <tt>array_of_structs.cpp</tt> and <tt>struct_of_arrays.cpp</tt>,
 this time using your <tt>PapiUtil</tt> class to count L1 cache misses.
 
-<h3>Part IV: Counting branch instructions</h3>
+<h3>Part IV: Counting branch mispredictions</h3>
+
+As we also discussed in class, when you write a conditional statement, the 
+compiler generates code trying to predict the likeliest branch (
+<tt>if</tt>, <tt>else if</tt> ...  <tt>else</tt>) your code will
+take on execution, so that this likeliest branch can be pre-loaded into
+the <i>instruction pipeline</i>.
 
 <h3>What to submit to github</h3>
 
