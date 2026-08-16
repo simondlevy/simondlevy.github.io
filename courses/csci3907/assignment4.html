@@ -50,29 +50,37 @@
 <h3>Part I: Counting FLOPS</h3>
 
 In slide #14 in the <a href="https://drive.google.com/file/d/1_yjJ5WLMyax7DKFdG8JtxE4XX31ZIaBh/view">Jagode/Danalis lecture</a> 
-we covered, there's a nice example of using PAPI to count not just the total compute cycles 
-we got with our in-class PAPI intro, but also the number of FLOPS (Floating-Point Operations Per Second),
-a crucial benchmark for intensive numerical computations like modern AI / Deep-Learning.  In this exercise
-we will combine both programs to get the FLOPS count.  Crucially, we will need to check the result
-of each PAPI call, as we did in hello-world, to ensure that we don't silently
-continue to the next step if something doesn't work.  To  do this, I first
-wrote a little <tt>check()</tt> function that ensures that the result of the
-PAPI operation equals <tt>PAPI_OK</tt>.  If it isn't, I report the error and
-exit the program immediately by calling <tt>exit(1);</tt> (which requires
-<tt>#include <stdlib.h></tt> at the top).  
+we covered, there's a nice example of using PAPI to count not just the total
+compute cycles we got with our in-class PAPI intro, but also the number of
+FLOPS (Floating-Point Operations Per Second), a crucial benchmark for intensive
+numerical computations like modern AI / Deep-Learning.  In this exercise we
+will combine both programs to get the FLOPS count.  Crucially, we will need to
+check the result of each PAPI call, as we did in hello-world, to ensure that we
+don't silently continue to the next step if something doesn't work.  To  do
+this, I first wrote a little <tt>check()</tt> function that ensures that the
+result of the PAPI operation equals <tt>PAPI_OK</tt>.  If it isn't, I report
+the error and exit the program immediately by calling <tt>exit(1);</tt> (which
+requires <tt>#include <stdlib.h></tt> at the top).  
 
 <br><br> Once that was working, I found that there was a problem with <tt>PAPI_FP_OPS</tt>.
 A little googling revealed that that feature isn't necessarily supported on every
 machine/OS, and that I should run the <tt><b>papi_avail</b></tt> command to see what
-features were avaialble to me.  Copy/pasting the following command into your terminal
+features were avaialable to me.  Copy/pasting the following command into your terminal
 window should help with this:
 
 <pre>
 papi_avail | grep "Yes   Yes"
 </pre>
 
-Finally, I found it crucial not to use any optimization flags like <tt>-O2</tt>
-, or PAPI would mysteriously report zero as the number of FLOPS!
+Finally, I found it crucial not to use any optimization flags like
+<tt>-O2</tt>, or PAPI would mysteriously report zero as the number of FLOPS!
+
+<br><br>
+Once you can get a sensible-looking report with a number of FLOPS, copy/paste
+    your <tt>do_work()</tt> function into your writeup, along with a little
+    comment on whether the number makes sense with respect to what you're
+    doing in the function.  (For my function I just did the standard 
+    <i>y = ax + b</i> computation inside a <tt>for</tt>-loop.)
 
 <h3>Part II: Creating a helper utility</h3>
 
