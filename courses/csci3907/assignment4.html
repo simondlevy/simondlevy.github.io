@@ -80,16 +80,67 @@ Once you can get a sensible-looking report with a number of FLOPS, copy/paste
     your <tt>do_work()</tt> function into your writeup, along with a little
     comment on whether the number makes sense with respect to what you're
     doing in the function.  (For my function I just did the standard 
-    <i>y = ax + b</i> computation inside a <tt>for</tt>-loop.)
+    <i>y = ax + b</i> computation inside a <tt>for</tt>-loop.) Put your code
+    in a file called <tt><b>part1.cpp</b></tt>.
 
-<h3>Part II: Counting cache misses</h3>
+<h3>Part II: Creating a helper utility</h3>
 
-<h3>Part III: Counting branch instructions</h3>
+Looking over the PAPI examples you can find online, you'll see a common pattern:
 
-<h3>Part IV: Creating a helper utility</h3>
+<br><br>
 
+<ol style="padding-left: 30px;">
+
+    <li>Call <tt>PAPI_library_init()</tt> to start PAPI and check that you have the
+        current version.
+    <li>Call <tt>PAPI_create_eventset()</tt> and check the result
+    <li>Call <tt>PAPI_add_events()</tt> and check the result
+    <li>Call <tt>PAPI_start()</tt> and check the result
+    <li>Run the code you want to profile
+    <li>Call <tt>PAPI_stop()</tt> to get the event counts
+</ol>
+
+Since copy-pasting these steps over and over for each new PAPI application is a
+clear violation of the
+<a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> 
+Principle, let's write a little utility class that we can reuse to get
+the counts for a particular event type.  Specifically, in a file
+<tt><b>papi_util.hpp</b> </tt>create a <tt><b>PapiUtil</b></tt> class
+with two public methods, <tt><b>void StartCountingFlops()</b></tt>
+<tt><b>long long GetCount()</b></tt>, and a private method <tt><b>Check</b></tt>
+to do the result-checking at each step.  Once you've done that, the code in
+the <tt>main()</tt> of your FLOPS-counting program <tt><b>part2.cpp</b></tt>
+will be very simple:
+<pre>
+    auto papi = PapiUtil();
+
+    papi.StartCountingFlops();
+
+    // Put your floating-point calculations loop here
+
+    printf("FLOPS=%lld\n", papi.GetCount());
+</pre>
+<h3>Part III: Counting cache misses</h3>
+
+<h3>Part IV: Counting branch instructions</h3>
 
 <h3>What to submit to github</h3>
+
+<br><br>
+
+<ul style="padding-left: 30px;">
+    <li><tt><b>part1.cpp</b></tt>
+    <li><tt><b>part2.cpp</b></tt>
+    <li><tt><b>part3.cpp</b></tt>
+    <li><tt><b>part4.cpp</b></tt>
+    <li><tt><b>papi_util.hpp</b></tt>
+    <li><tt><b>Makefile</b></tt>
+</ol>
+
+<br><br>
+
+To run all your code, I should be able to type <tt><b>make check</b></tt>,
+and see something like the following results:
 
 </body>
 </html>
