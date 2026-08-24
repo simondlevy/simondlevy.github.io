@@ -47,20 +47,23 @@
 
 <br><br>
 
-<b>To do individually:</b>
-<br><br>
-<ol style="padding-left: 30px;">
-    <li>Log into one of the computers in our classroom, open a terminal window, and copy/paste/run the following line:
-        <br><br><tt><b>echo -e "\nexport PATH=\$PATH:/opt/csci3907:/opt/csci3907/oss-cad-suite/bin" >> ~/.bashrc</b></tt>
+<h3>Option A: Install the toolchain on your laptop</h3>
 
-     <br><br><li> Close the terminal window, open an other terminal window, and run the following commands to check that
-         your previous command worked as expected:
-        <br><br><tt><b>bambu --version</b></tt>
-        <br><tt><b>yosys --version</b></tt>
-</ol>
+Google <b>oss cad suite install <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></b>,
+filling in the blank with the name of your operating sytem (<b>mac os</b> or <b>windows</b> or <b>linux</b>).
 
-<b>To do as a team:</b>
-<br><br>
+<h3>Option B: Use the toolchain installed in our lab</h3>
+
+Log into one of the computers in our classroom, open a terminal window, and copy/paste/enter the following line:
+<br><br><tt><b>echo -e "\nexport PATH=\$PATH:/opt/csci3907/oss-cad-suite/bin" >> ~/.bashrc</b></tt>
+
+<h3>Checking your toolchain setup</h3>
+Close the terminal window, open an other terminal window, and run the following command to check that
+your toolchain setup worked as expected:
+<br><br><tt><b>yosys --version</b></tt>
+
+<h3>Team exercise</h3>
+
 <ol style="padding-left: 30px;">
         <li>Google <b>icebreaker fpga yosys blinky example</b> to find a nice AI solution to making a &ldquo;blinky&rdquo;
             for your iCEBreaker board (blinky being the hardware equivalent of the beloved HelloWorld program).  Copy/paste
@@ -79,19 +82,15 @@
         code.
 </ol>
 
-<b>Submitting to github:</b>
+<h3>Submitting to github:</h3>
 
-<br><br>
-<p style="margin-left: 10px;">
 Pick one member of your team to submit the code. The person you pick should
 Write a little <tt><b>README.md</b></tt> naming the members of your team, zip
 up the four files (<tt>.v</tt>, <tt>.pcf</tt>, <tt>Makefile</tt>, and
 <tt>README.md</tt>, upload it to their github, and send me an email to notify
 me.</p>
 
-<b>Optional:</b>&nbsp; Enjoy this <a href="https://www.youtube.com/watch?v=YdP2fFyjBWQ">video</a>
-of adorable baby pandas learning to eat bamboo!
-
+<b></b>
 
 </body>
 </html>
