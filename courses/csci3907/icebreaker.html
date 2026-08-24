@@ -71,26 +71,43 @@ your toolchain setup worked as expected:
             for your iCEBreaker board (blinky being the hardware equivalent of the beloved HelloWorld program).  Copy/paste
             the code into the specified files (<tt>.v</tt> file and <tt>.pcf</tt> file)
 
-        <br><br><li> Once you can build and run the code on your iCEBreaker, turn the Build and Flash
-            commands into a little <tt>Makefile</tt>, following the process we've been using in class.
-            Your Makfile should work as follows:
-            <br><br>Typing <tt><b>make</b></tt> should build the <tt>.bin</tt> file
-            <br>Typing <tt><b>make flash</b></tt> should load the <tt>.bin</tt> file onto the board,
-            causing the LED to blink
-            <br>Typing <tt><b>make clean</b></tt> should delete everything but the <tt>.v</tt> file,
-            <tt>.pcf</tt> file, and <tt>Makefile</tt>
+        <br><br><li> Once you can build and run the code on your iCEBreaker, do one of the following, based on your OS:
 
-        <br><br><li> Once everything is working as specified, call me over so I can try out your
-        code.
+		<br><br>
+
+		<ul> 
+
+		    <li> Mac OS or Linux: turn the Build and Flash
+		    commands into a little <tt>Makefile</tt>, following the process we've been using in class.
+		    Your Makfile should work as follows:
+		    <br><br>Typing <tt><b>make</b></tt> should build the <tt>.bin</tt> file
+		    <br>Typing <tt><b>make flash</b></tt> should load the <tt>.bin</tt> file onto the board,
+		    causing the LED to blink
+		    <br>Typing <tt><b>make clean</b></tt> should delete everything but the <tt>.v</tt> file,
+		    <tt>.pcf</tt> file, and <tt>Makefile</tt>
+
+		    <br><br><li> Windows: the simplest way to pack everything into a single build-and-load
+			    script would probably be a traditional .BAT file, but perhaps you can take a more
+			    modern approach with VSCode, as appears to be supported by this
+			    <a href="https://github.com/YoWASP/vscode">repo</a>.
+
+                </ul>
+
+        <br><br><li> Once everything is working as specified, call me over for a demo!
 </ol>
 
 <h3>Submitting to github:</h3>
 
-Pick one member of your team to submit the code. The person you pick should
-Write a little <tt><b>README.md</b></tt> naming the members of your team, zip
-up the four files (<tt>.v</tt>, <tt>.pcf</tt>, <tt>Makefile</tt>, and
-<tt>README.md</tt>, upload it to their github, and send me an email to notify
-me.</p>
+Pick one member of your team to submit the code and send me an email asking me to check it. Your upload should include:
+
+<ul style="padding-left: 30px;">
+	<br>
+	<li> Your Verilog source file (<tt></b>.v</b></tt>) 
+	<li> Your Physical Constraints File (<tt></b>.pcf</b></tt>) 
+        <li> Your Makefile (OS X, Linux) or Windows equivalent (.BAT file or VSCode project)
+        <li> A little <tt><b>README.md</b></tt> naming the members of your team, followed by instructions
+   	     on how to run your code 
+</ul>
 
 <b></b>
 
