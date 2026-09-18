@@ -26,9 +26,9 @@ def fib_fast(n):
     return fib_fast(n)
 
 def fib_loop(n):
-    s = 0
     if n <= 2:
         return 1
+    s = 0
     prev1 = 1
     prev2 = 1
     for k in range(n-2):
