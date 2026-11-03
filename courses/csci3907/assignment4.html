@@ -60,7 +60,7 @@ don't silently continue to the next step if something doesn't work.  To  do
 this, I first wrote a little <tt>Check()</tt> function that ensures that the
 result of the PAPI operation equals <tt>PAPI_OK</tt>.  If it isn't, I report
 the error and exit the program immediately by calling <tt>exit(1);</tt> (which
-requires <tt>#include <stdlib.h></tt> at the top).  
+requires <tt>#include &lt;stdlib.h&gt;</tt> at the top).  
 
 <br><br> Once that was working, I found that there was a problem with <tt>PAPI_FP_OPS</tt>.
 A little googling revealed that that feature isn't necessarily supported on every
