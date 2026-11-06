@@ -47,7 +47,7 @@
 
 <br><br>
 
-<h3>Part I: Counting FLOPS</h3>
+<h3>Getting started </h3>
 
 In slide #14 in the <a href="https://drive.google.com/file/d/1_yjJ5WLMyax7DKFdG8JtxE4XX31ZIaBh/view">Jagode/Danalis lecture</a> 
 we covered, there's a nice example of using PAPI to count not just the total
@@ -75,15 +75,7 @@ papi_avail | grep "Yes   Yes"
 Finally, I found it crucial not to use any optimization flags like
 <tt>-O2</tt>, or PAPI would mysteriously report zero as the number of FLOPS!
 
-<br><br>
-Once you can get a sensible-looking report with a number of FLOPS, copy/paste
-    your <tt>do_work()</tt> function into your writeup, along with a little
-    comment on whether the number makes sense with respect to what you're
-    doing in the function.  (For my function I just did the standard 
-    <i>y = ax + b</i> computation inside a <tt>for</tt>-loop.) Put your code
-    in a file called <tt><b>part1.cpp</b></tt>.
-
-<h3>Part II: Creating a helper utility</h3>
+<h3>Part I: Creating a helper utility</h3>
 
 Looking over the PAPI examples you can find online, you'll see a common pattern:
 
@@ -109,7 +101,7 @@ the counts for a particular event type.  Specifically, in a file
 with two public methods, <tt><b>void StartCountingFlops()</b></tt>
 <tt><b>long long GetCount()</b></tt>, and a private method <tt><b>Check()</b></tt>
 to do the result-checking at each step.  Once you've done that, the code in
-the <tt>main()</tt> of your FLOPS-counting program <tt><b>part2.cpp</b></tt>
+the <tt>main()</tt> of your FLOPS-counting program <tt><b>part1.cpp</b></tt>
 will be very simple:
 <pre>
     auto papi = PapiUtil();
@@ -120,7 +112,7 @@ will be very simple:
 
     printf("FLOPS=%lld\n", papi.GetCount());
 </pre>
-<h3>Part III: Counting cache misses</h3>
+<h3>Part II: Counting cache misses</h3>
 
 As we discussed in class, the reason that the struct-of-arrays approach runs
 so much faster than array-of-structs approach is that putting data of a
@@ -136,11 +128,11 @@ So, for this exercise, you're going to augument your <tt>PapiUtil</tt>
 class by adding a method <tt><b>StartCountingL1Misses()</b></tt>.  As usual,
 copy-paste-modify (from <tt>StartCountingFlops()</tt>, followed by a little
 code-factoring, should make it easy to to implement this new method.  Next,
-write a program <tt><b>part3.cpp</b></tt> containing your copy-pasted code from
+write a program <tt><b>part2.cpp</b></tt> containing your copy-pasted code from
 Assignment #3's <tt>array_of_structs.cpp</tt> and <tt>struct_of_arrays.cpp</tt>,
 this time using your <tt>PapiUtil</tt> class to count L1 cache misses.
 
-<h3>Part IV: Counting branch mispredictions</h3>
+<h3>Part III: Counting branch mispredictions</h3>
 
 As we also discussed in class, when you write a conditional statement, the 
 compiler generates code trying to predict the likeliest branch (
@@ -157,7 +149,7 @@ random value.
 
 So, for this final exercise, you should add a <tt>PapiUtil</tt> method
 <tt><b>StartCountingBranchMispredictions()</b></tt>, and then write a program
-<tt><b>part4.cpp</b></tt> that uses a modified version of the code in
+<tt><b>part3.cpp</b></tt> that uses a modified version of the code in
 the slide to test your branch-predicting feature. Running
 <tt><b>papi_avail | grep "Yes   Yes"</b></tt> again should reveal what event code to use.
 
@@ -172,7 +164,6 @@ need to do a writeup.  Instead, submit the following files:
     <li><tt><b>part1.cpp</b></tt>
     <li><tt><b>part2.cpp</b></tt>
     <li><tt><b>part3.cpp</b></tt>
-    <li><tt><b>part4.cpp</b></tt>
     <li><tt><b>papi_util.hpp</b></tt>
     <li><tt><b>Makefile</b></tt>
 </ol>
@@ -184,13 +175,11 @@ and see something like the following results:
 
 <pre>
 ./part1
-FLOPS=2000000 cycles=8650426
-./part2
 FLOPS=2000000
-./part3
+./part2
 SOA caches misses=49397
 AOS caches misses=220421
-./part4
+./part3
 Branch mispredictions with non-random = 200010
 Branch mispredictions with random     = 943296
 </pre>
